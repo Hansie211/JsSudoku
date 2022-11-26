@@ -175,9 +175,6 @@ export default class PuzzleBoard {
     solution;
 
     /** @type {Number} */
-    hintCount;
-
-    /** @type {Number} */
     difficultyLevel;
 
     /**
@@ -197,7 +194,6 @@ export default class PuzzleBoard {
             }),
             seed: puzzle.seed,
             solution: puzzle.solution,
-            hintCount: puzzle.hintCount,
             difficultyLevel: puzzle.difficultyLevel,
         };
 
@@ -215,7 +211,7 @@ export default class PuzzleBoard {
 
         result.cells = obj.cells.map((info) => {
             const pos = new Position(info.x, info.y);
-            const cell = new Cell(pos, info.static ? info.value : 0);
+            const cell = reactive(new Cell(pos, info.static ? info.value : 0));
             if (!info.static) cell.value = info.value;
 
             info.notes.forEach((n) => cell.notes.addValue(n));
@@ -224,7 +220,6 @@ export default class PuzzleBoard {
         });
         result.seed = obj.seed;
         result.solution = obj.solution;
-        result.hintCount = obj.hintCount;
         result.difficultyLevel = obj.difficultyLevel;
 
         return result;
@@ -289,7 +284,7 @@ export default class PuzzleBoard {
 
                 result.solution[index] = solutionValue;
 
-                const cell = new Cell(position, boardValue);
+                const cell = reactive(new Cell(position, boardValue));
                 result.cells[index] = cell;
             }
         }
@@ -300,6 +295,5 @@ export default class PuzzleBoard {
     constructor() {
         this.cells = [];
         this.solution = [];
-        this.hintCount = 0;
     }
 }
