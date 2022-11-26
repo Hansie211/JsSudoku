@@ -5,22 +5,21 @@
         @click="
             () => {
                 if (!isSelected) $emit('select', x, y);
-                place();
             }
         "
     >
-        <template v-if="cell.value.value !== 0">
+        <template v-if="cell.value !== 0">
             <template v-if="cell.isStatic">
-                {{ cell.value.value }}
+                {{ cell.value }}
             </template>
             <template v-else>
-                <span>{{ cell.value.value }}</span>
+                <span>{{ cell.value }}</span>
             </template>
         </template>
         <template v-else>
             <div id="notes">
-                <div v-for="index in boardSize" :key="index" class="note">
-                    {{ cell.notes.hasValue(index) ? index : "" }}
+                <div v-for="(set, index) in notes" :key="index" class="note">
+                    {{ set ? index + 1 : "" }}
                 </div>
             </div>
         </template>
@@ -29,7 +28,7 @@
 <script>
 import { StructureDefinitions } from "src/lib/sudoku/board";
 import PuzzleBoard, { Cell } from "src/lib/reactiveSoduku";
-import { defineComponent, ref } from "vue";
+import { defineComponent } from "vue";
 import { useSettingsStore } from "src/stores/settings-store";
 
 export default defineComponent({
@@ -67,18 +66,17 @@ export default defineComponent({
             settings,
         };
     },
-    methods: {
-        place() {
-            //console.log(this.cell.value);
-        },
-    },
-    exposes: ["place"],
     computed: {
         boardSize() {
             return StructureDefinitions.SIZE;
         },
         isError() {
-            return this.cell.value.value > 0 && this.cell.value.value !== this.puzzle.getSolutionValue(this.cell.position);
+            return this.cell.value > 0 && this.cell.value !== this.puzzle.getSolutionValue(this.cell.position);
+        },
+        notes() {
+            return Array(this.boardSize)
+                .fill(null)
+                .map((_, index) => this.cell.notes.hasValue(index + 1));
         },
     },
     watch: {},

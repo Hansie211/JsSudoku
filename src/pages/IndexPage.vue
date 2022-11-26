@@ -42,7 +42,7 @@ import SudokuBoard from "src/components/SudokuBoard.vue";
 import SettingsDialog from "src/components/SettingsDialog.vue";
 import { StructureDefinitions } from "src/lib/sudoku/board";
 import { getPuzzle } from "src/lib/sudoku/sudoku";
-import { defineComponent, ref } from "vue";
+import { defineComponent, reactive, ref } from "vue";
 import PuzzleBoard from "src/lib/reactiveSoduku";
 import Timer from "src/components/Timer.vue";
 import { useSettingsStore } from "src/stores/settings-store";
@@ -62,7 +62,7 @@ export default defineComponent({
         return {
             settings,
             memory,
-            puzzle,
+            puzzle: reactive(puzzle),
             noteMode: ref(false),
             renderKey: ref(0),
         };
@@ -104,8 +104,8 @@ export default defineComponent({
         resetGame() {
             this.puzzle.cells.forEach((cell) => {
                 if (cell.isStatic) return;
-                cell.value.value = 0;
-                cell.notes.values.value.length = 0;
+                cell.value = 0;
+                cell.notes.values.length = 0;
             });
 
             this.initNewGame();
@@ -139,37 +139,37 @@ export default defineComponent({
             if (!this.canEditSelectedCell()) return;
 
             if (!this.noteMode) {
-                this.memory.store(this.selectedCell.id, { num: this.selectedCell.value.value, hint: false }, 0);
+                this.memory.store(this.selectedCell.id, { num: this.selectedCell.value, hint: false }, 0);
 
-                if (this.selectedCell.value.value === num) {
-                    this.selectedCell.value.value = 0;
+                if (this.selectedCell.value === num) {
+                    this.selectedCell.value = 0;
                 } else {
-                    this.selectedCell.value.value = num;
+                    this.selectedCell.value = num;
                 }
             } else {
                 if (this.selectedCell.hasValue()) {
                     this.showError("Cell already filled selected.");
                 } else {
                     const hasValue = this.selectedCell.notes.hasValue(num);
-                    this.memory.store(this.selectedCell.id, { num: this.selectedCell.value.value, set: hasValue }, 1);
+                    this.memory.store(this.selectedCell.id, { num: num, set: hasValue }, 1);
                     this.selectedCell.notes.swapValue(num);
                 }
             }
         },
         clearCell() {
             if (!this.canEditSelectedCell()) return;
-            this.selectedCell.value.value = 0;
+            this.selectedCell.value = 0;
         },
         hint() {
-            const nextOpenCell = this.puzzle.cells.find((cell) => !cell.value.value);
+            const nextOpenCell = this.puzzle.cells.find((cell) => !cell.value);
             if (!nextOpenCell) return;
 
             const soltionValue = this.puzzle.solution[PuzzleBoard.toIndex(nextOpenCell.position)];
 
-            this.memory.store(nextOpenCell.id, { num: nextOpenCell.value.value, hint: true }, 0);
+            this.memory.store(nextOpenCell.id, { num: nextOpenCell.value, hint: true }, 0);
 
-            nextOpenCell.value.value = soltionValue;
-            this.puzzle.hintCount.value++;
+            nextOpenCell.value = soltionValue;
+            this.puzzle.hintCount++;
         },
         cellSelected(id) {
             this.selectedCellId = id;
@@ -181,8 +181,8 @@ export default defineComponent({
             const cell = this.puzzle.findCellById(move.cellId);
 
             if (move.mode === 0) {
-                cell.value.value = move.value.num;
-                if (move.value.hint === true) this.puzzle.hintCount.value--;
+                cell.value = move.value.num;
+                if (move.value.hint === true) this.puzzle.hintCount--;
                 return;
             } else {
                 const action = move.value.set ? cell.notes.addValue : cell.notes.removeValue;
@@ -203,9 +203,9 @@ export default defineComponent({
         activeNumbers() {
             if (!this.selectedCell) return [];
             if (this.selectedCell.isStatic) return [];
-            if (this.selectedCell.value.value) return [];
+            if (this.selectedCell.value) return [];
 
-            return this.selectedCell.notes.values.value;
+            return this.selectedCell.notes.values;
         },
     },
 });

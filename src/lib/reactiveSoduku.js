@@ -1,4 +1,5 @@
-import { ref } from "vue";
+// import { ref } from "vue";
+import { reactive } from "vue";
 import Board, { Column, Square, StructureDefinitions } from "./sudoku/board";
 
 export class Position {
@@ -28,10 +29,7 @@ export class Position {
 }
 
 export class Notes {
-    /** @type {Cell} */
-    cell;
-
-    /** @type {ref<Array<Number>>} */
+    /** @type {Array<Number>} */
     values;
 
     /**
@@ -39,7 +37,7 @@ export class Notes {
      * @returns {Boolean}
      */
     hasValue(num) {
-        return this.values.value.includes(num);
+        return this.values.includes(num);
     }
 
     /**
@@ -47,16 +45,16 @@ export class Notes {
      */
     addValue(num) {
         if (this.hasValue(num)) return;
-        this.values.value.push(num);
+        this.values.push(num);
     }
 
     /**
      * @param {Number} num
      */
     removeValue(num) {
-        const index = this.values.value.indexOf(num);
+        const index = this.values.indexOf(num);
         if (index < 0) return;
-        this.values.value.splice(index, 1);
+        this.values.splice(index, 1);
     }
 
     /**
@@ -70,12 +68,8 @@ export class Notes {
         }
     }
 
-    /**
-     * @param {Cell} cell
-     */
-    constructor(cell) {
-        this.values = ref([]);
-        this.cell = cell;
+    constructor() {
+        this.values = reactive([]);
 
         this.hasValue = this.hasValue.bind(this);
         this.addValue = this.addValue.bind(this);
@@ -153,7 +147,7 @@ export class Cell {
 
     /** @returns {Boolean} */
     hasValue() {
-        return this.value.value > 0;
+        return this.value > 0;
     }
 
     /**
@@ -162,8 +156,8 @@ export class Cell {
      */
     constructor(position, initialValue) {
         this._position = position;
-        this.value = ref(initialValue);
-        this.notes = new Notes(this);
+        this.value = initialValue;
+        this.notes = new Notes();
 
         this._isStatic = this.hasValue();
 
@@ -185,45 +179,44 @@ export default class PuzzleBoard {
 
     /**
      * @param {PuzzleBoard} puzzle
-     * @returns {String}
+     * @returns {Object}
      */
     static serialize(puzzle) {
         const obj = {
             cells: puzzle.cells.map((cell) => {
                 return {
-                    value: cell.value.value,
+                    value: cell.value,
                     x: cell.position.x,
                     y: cell.position.y,
-                    notes: cell.notes.values.value,
+                    notes: cell.notes.values,
                     static: cell.isStatic,
                 };
             }),
             solution: puzzle.solution,
-            hintCount: puzzle.hintCount.value,
+            hintCount: puzzle.hintCount,
         };
 
-        return JSON.stringify(obj);
+        return obj;
     }
 
     /**
-     * @param {String} puzzle
+     * @param {Object} obj
      * @returns {PuzzleBoard}
      */
-    static deserialize(str) {
-        const obj = JSON.parse(str);
+    static deserialize(obj) {
         const result = Object.create(PuzzleBoard.prototype, {
             cells: obj.cells.map((info) => {
                 const pos = new Position(info.x, info.y);
                 const cell = new Cell(pos, info.static ? info.value : 0);
-                if (!info.static) cell.value.value = info.value;
+                if (!info.static) cell.value = info.value;
 
-                cell.notes.values.value = info.notes;
+                info.notes.forEach((n) => cell.notes.addValue(n));
 
                 return cell;
             }),
 
             solution: obj.solution,
-            hintCount: ref(obj.hintCount),
+            hintCount: obj.hintCount,
         });
 
         return result;
@@ -273,7 +266,7 @@ export default class PuzzleBoard {
         this.cells = [];
         this.solution = [];
         this.seed = seed;
-        this.hintCount = ref(0);
+        this.hintCount = 0;
 
         for (var x = 0; x < StructureDefinitions.SIZE; x++) {
             for (var y = 0; y < StructureDefinitions.SIZE; y++) {
