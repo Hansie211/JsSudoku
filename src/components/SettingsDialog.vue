@@ -2,7 +2,7 @@
     <q-dialog v-model="show">
         <q-card class="my-card">
             <q-card-section>
-                <q-list style="font-size: 1.5em">
+                <q-list style="font-size: 1.2em">
                     <q-item-label header>Options</q-item-label>
                     <q-item clickable v-ripple v-for="setting in settingsToggles" :key="setting.name" @click="() => (setting.prop.value = !setting.prop.value)">
                         <q-item-section> {{ setting.name }} </q-item-section>
@@ -12,8 +12,10 @@
                     </q-item>
                 </q-list>
             </q-card-section>
-            <q-card-section>
+            <q-card-section class="q-gutter-y-sm">
+                <div class="text-subtitle2">Current level: {{ puzzle.seed }}</div>
                 <q-btn label="Retry level" color="primary" class="full-width" @click="resetGame" />
+                <q-btn label="New level" color="primary" class="full-width" @click="newGame" />
             </q-card-section>
 
             <q-separator />
@@ -25,8 +27,10 @@
     </q-dialog>
 </template>
 <script>
+import PuzzleBoard from "src/lib/reactiveSoduku";
 import { useSettingsStore } from "src/stores/settings-store";
 import { computed, defineComponent } from "vue";
+import NewLevelDialog from "./NewLevelDialog";
 
 export default defineComponent({
     name: "SettingsDialog",
@@ -35,8 +39,12 @@ export default defineComponent({
             type: Boolean,
             required: true,
         },
+        puzzle: {
+            type: PuzzleBoard,
+            required: true,
+        },
     },
-    emits: ["update:modelValue", "resetGame"],
+    emits: ["update:modelValue", "resetGame", "newLevel"],
     setup() {
         const settings = useSettingsStore();
 
@@ -79,6 +87,20 @@ export default defineComponent({
                 })
                 .onOk(() => {
                     this.$emit("resetGame");
+                    this.show = false;
+                });
+        },
+        newGame() {
+            this.$q
+                .dialog({
+                    component: NewLevelDialog,
+                    componentProps: {
+                        text: "something",
+                        // ...more..props...
+                    },
+                })
+                .onOk((levelInfo) => {
+                    this.$emit("newLevel", levelInfo);
                     this.show = false;
                 });
         },

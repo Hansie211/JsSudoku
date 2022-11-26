@@ -1,7 +1,7 @@
 <template>
     <q-page id="page">
         <div style="padding: 10px">
-            <sudoku-board ref="sudoku" :puzzle="puzzle" size="4.8vw" @cellSelected="cellSelected" />
+            <sudoku-board ref="sudoku" :puzzle="puzzle" :key="renderKey" size="4.8vw" @cellSelected="cellSelected" />
         </div>
         <div id="bottom-bar" class="flex column full-width">
             <timer v-show="settings.showTime" class="q-pl-sm" />
@@ -27,7 +27,7 @@
                 <!-- <q-icon :color="!selectedCell?.isStatic && !selectedCell?.value.value && selectedCell?.notes.hasValue(value) ? '' : 'transparent'" name="close" class="number-icon q-pa-none q-ma-none" padding="none" size="sm" /> -->
             </div>
         </div>
-        <settings-dialog v-model="showSettings" @resetGame="resetGame" />
+        <settings-dialog v-model="showSettings" :puzzle="puzzle" @resetGame="resetGame" @newLevel="newLevel" />
     </q-page>
 </template>
 
@@ -35,7 +35,7 @@
 import SudokuBoard from "src/components/SudokuBoard.vue";
 import SettingsDialog from "src/components/SettingsDialog.vue";
 import { StructureDefinitions } from "src/lib/sudoku/board";
-import { getPuzzle } from "src/lib/sudoku/sudoku";
+import { getPuzzle, getPuzzleAsync } from "src/lib/sudoku/sudoku";
 import { defineComponent, ref } from "vue";
 import PuzzleBoard from "src/lib/reactiveSoduku";
 import Timer from "src/components/Timer.vue";
@@ -54,6 +54,7 @@ export default defineComponent({
             settings,
             puzzle,
             noteMode: ref(false),
+            renderKey: ref(0),
         };
     },
     data() {
@@ -68,6 +69,29 @@ export default defineComponent({
                 if (cell.isStatic) return;
                 cell.value.value = 0;
                 cell.notes.values.value.length = 0;
+            });
+        },
+        newLevel(levelInfo) {
+            const emptySquares = {
+                0: 16,
+                1: 32,
+                2: 48,
+                3: 64,
+            };
+
+            const squareCount = emptySquares[levelInfo.level.toString()];
+
+            this.$q.loading.show({
+                message: "Generating level...",
+                delay: 1,
+            });
+            this.$nextTick(() => {
+                window.setTimeout(() => {
+                    const [solution, board, seed] = getPuzzle(squareCount, levelInfo.seed);
+                    this.puzzle = new PuzzleBoard(board, solution, seed);
+                    this.renderKey++;
+                    this.$q.loading.hide();
+                }, 100);
             });
         },
         canEditSelectedCell() {
