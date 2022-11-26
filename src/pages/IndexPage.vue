@@ -198,7 +198,7 @@ export default defineComponent({
             }
         },
         clearCell() {
-            placeNumber(0);
+            this.placeNumber(0);
         },
         hint() {
             const nextOpenCell = this.puzzle.cells.find((cell) => !cell.value);
