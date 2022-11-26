@@ -65,6 +65,14 @@ export default defineComponent({
                     set: (v) => (settings.showErrors = v),
                 }),
             },
+            {
+                name: "Allow hints",
+                icon: "lightbulb",
+                prop: computed({
+                    get: () => settings.showHints,
+                    set: (v) => (settings.showHints = v),
+                }),
+            },
         ];
 
         return {
