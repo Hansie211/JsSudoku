@@ -27,7 +27,7 @@ export class MemoryItem {
     constructor(cellId, value, mode) {
         this.#cellId = cellId;
         this.#value = value;
-        this.mode = mode;
+        this.#mode = mode;
     }
 }
 

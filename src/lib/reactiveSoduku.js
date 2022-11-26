@@ -113,9 +113,6 @@ export class Cell {
     /** @type {Square} */
     _square;
 
-    // /** @type {PuzzleBoard} */
-    // _puzzle;
-
     /** @type {Notes} */
     notes;
 
@@ -151,7 +148,7 @@ export class Cell {
 
     /** @returns {Number} */
     get id() {
-        return this.position.x + this.position.y * StructureDefinitions.SIZE;
+        return this.position.x + this.position.y * StructureDefinitions.SIZE + 1;
     }
 
     /** @returns {Boolean} */
@@ -183,6 +180,9 @@ export default class PuzzleBoard {
     /** @type {Array<Number} */
     solution;
 
+    /** @type {Number} */
+    hintCount;
+
     /**
      * @param {Position} position
      * @returns {Number}
@@ -210,6 +210,15 @@ export default class PuzzleBoard {
     }
 
     /**
+     * @param {Number} id
+     * @returns {Cell}
+     */
+    findCellById(id) {
+        if (!id) return undefined;
+        return this.cells.find((cell) => cell.id === id);
+    }
+
+    /**
      * @param {Board} board
      * @param {Board} solution
      * @param {Number} seed
@@ -218,6 +227,7 @@ export default class PuzzleBoard {
         this.cells = [];
         this.solution = [];
         this.seed = seed;
+        this.hintCount = ref(0);
 
         for (var x = 0; x < StructureDefinitions.SIZE; x++) {
             for (var y = 0; y < StructureDefinitions.SIZE; y++) {

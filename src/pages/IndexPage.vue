@@ -19,7 +19,8 @@
                         "
                     />
                     <q-space />
-                    <q-btn icon="lightbulb" flat round size="md" @click="clearCell" v-show="settings.showHints" />
+                    <q-btn icon="undo" flat round size="md" @click="undo" />
+                    <q-btn icon="lightbulb" flat round size="md" @click="hint" v-show="settings.showHints" />
                     <q-toggle v-model="noteMode" icon="edit" color="positive" />
                     <q-btn icon="backspace" flat round size="md" @click="clearCell" />
                 </div>
@@ -134,7 +135,7 @@ export default defineComponent({
             if (!this.canEditSelectedCell()) return;
 
             if (!this.noteMode) {
-                this.memory.store(this.selectedCell.id, this.selectedCell.value, 0);
+                this.memory.store(this.selectedCell.id, this.selectedCell.value.value, 0);
 
                 if (this.selectedCell.value.value === num) {
                     this.selectedCell.value.value = 0;
@@ -155,7 +156,16 @@ export default defineComponent({
             if (!this.canEditSelectedCell()) return;
             this.selectedCell.value.value = 0;
         },
+        hint() {
+            const nextOpenCell = this.puzzle.cells.find((cell) => !cell.value.value);
+            if (!nextOpenCell) return;
 
+            const soltionValue = this.puzzle.solution[PuzzleBoard.toIndex(nextOpenCell.position)];
+
+            this.memory.store(nextOpenCell.id, nextOpenCell.value.value, 0);
+
+            nextOpenCell.value.value = soltionValue;
+        },
         cellSelected(id) {
             this.selectedCellId = id;
         },
@@ -163,10 +173,11 @@ export default defineComponent({
             if (!this.memory.size) return;
 
             const move = this.memory.rollBack();
-            const cell = this.puzzle.cells.find((cell) => cell.id === move.cellId);
+            const cell = this.puzzle.findCellById(move.cellId);
 
             if (move.mode === 0) {
                 cell.value.value = move.value;
+                return;
             } else {
                 const action = move.value.set ? cell.notes.addValue : cell.notes.removeValue;
                 action(move.value.num);
@@ -177,11 +188,11 @@ export default defineComponent({
         boardSize() {
             return StructureDefinitions.SIZE;
         },
-        selectedCellIndex() {
-            return this.puzzle.cells.findIndex((x) => x.id === this.selectedCellId);
-        },
+        // selectedCellIndex() {
+        //     return -1; //this.puzzle.cells.findIndex((x) => x.id === this.selectedCellId);
+        // },
         selectedCell() {
-            return this.selectedCellIndex > -1 ? this.puzzle.cells[this.selectedCellIndex] : null;
+            return this.puzzle.findCellById(this.selectedCellId);
         },
         activeNumbers() {
             if (!this.selectedCell) return [];
