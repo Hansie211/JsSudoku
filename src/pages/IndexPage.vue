@@ -4,7 +4,11 @@
             <sudoku-board ref="sudoku" :puzzle="puzzle" :key="renderKey" size="4.8vw" @cellSelected="cellSelected" />
         </div>
         <div id="bottom-bar" class="flex column full-width">
-            <timer ref="timer" v-show="settings.showTime" class="q-pl-sm" />
+            <div id="info-bar" class="flex row full-width q-px-sm">
+                <timer ref="timer" v-show="settings.showTime" class="text-caption" />
+                <q-space />
+                <div class="text-caption">Hints {{ puzzle.hintCount }}</div>
+            </div>
             <div id="action-bar" class="full-width">
                 <div id="mode-bar" class="row q-pa-sm">
                     <q-btn
@@ -135,7 +139,7 @@ export default defineComponent({
             if (!this.canEditSelectedCell()) return;
 
             if (!this.noteMode) {
-                this.memory.store(this.selectedCell.id, this.selectedCell.value.value, 0);
+                this.memory.store(this.selectedCell.id, { num: this.selectedCell.value.value, hint: false }, 0);
 
                 if (this.selectedCell.value.value === num) {
                     this.selectedCell.value.value = 0;
@@ -147,7 +151,7 @@ export default defineComponent({
                     this.showError("Cell already filled selected.");
                 } else {
                     const hasValue = this.selectedCell.notes.hasValue(num);
-                    this.memory.store(this.selectedCell.id, { num: this.selectedCell.value, set: hasValue }, 1);
+                    this.memory.store(this.selectedCell.id, { num: this.selectedCell.value.value, set: hasValue }, 1);
                     this.selectedCell.notes.swapValue(num);
                 }
             }
@@ -162,9 +166,10 @@ export default defineComponent({
 
             const soltionValue = this.puzzle.solution[PuzzleBoard.toIndex(nextOpenCell.position)];
 
-            this.memory.store(nextOpenCell.id, nextOpenCell.value.value, 0);
+            this.memory.store(nextOpenCell.id, { num: nextOpenCell.value.value, hint: true }, 0);
 
             nextOpenCell.value.value = soltionValue;
+            this.puzzle.hintCount.value++;
         },
         cellSelected(id) {
             this.selectedCellId = id;
@@ -176,7 +181,8 @@ export default defineComponent({
             const cell = this.puzzle.findCellById(move.cellId);
 
             if (move.mode === 0) {
-                cell.value.value = move.value;
+                cell.value.value = move.value.num;
+                if (move.value.hint === true) this.puzzle.hintCount.value--;
                 return;
             } else {
                 const action = move.value.set ? cell.notes.addValue : cell.notes.removeValue;
