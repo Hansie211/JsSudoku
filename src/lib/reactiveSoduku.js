@@ -177,6 +177,9 @@ export default class PuzzleBoard {
     /** @type {Number} */
     hintCount;
 
+    /** @type {Number} */
+    difficultyLevel;
+
     /**
      * @param {PuzzleBoard} puzzle
      * @returns {Object}
@@ -192,8 +195,10 @@ export default class PuzzleBoard {
                     static: cell.isStatic,
                 };
             }),
+            seed: puzzle.seed,
             solution: puzzle.solution,
             hintCount: puzzle.hintCount,
+            difficultyLevel: puzzle.difficultyLevel,
         };
 
         return obj;
@@ -204,22 +209,30 @@ export default class PuzzleBoard {
      * @returns {PuzzleBoard}
      */
     static deserialize(obj) {
-        const result = Object.create(PuzzleBoard.prototype, {
-            cells: obj.cells.map((info) => {
-                const pos = new Position(info.x, info.y);
-                const cell = new Cell(pos, info.static ? info.value : 0);
-                if (!info.static) cell.value = info.value;
+        if (obj === null) return null;
+        // try {
+        const result = new PuzzleBoard();
 
-                info.notes.forEach((n) => cell.notes.addValue(n));
+        result.cells = obj.cells.map((info) => {
+            const pos = new Position(info.x, info.y);
+            const cell = new Cell(pos, info.static ? info.value : 0);
+            if (!info.static) cell.value = info.value;
 
-                return cell;
-            }),
+            info.notes.forEach((n) => cell.notes.addValue(n));
 
-            solution: obj.solution,
-            hintCount: obj.hintCount,
+            return cell;
         });
+        result.seed = obj.seed;
+        result.solution = obj.solution;
+        result.hintCount = obj.hintCount;
+        result.difficultyLevel = obj.difficultyLevel;
 
         return result;
+        // } catch (error) {
+        //     console.debug(obj);
+        //     console.warn("Cannot deserialize", error);
+        //     return null;
+        // }
     }
 
     /**
@@ -262,12 +275,10 @@ export default class PuzzleBoard {
      * @param {Board} solution
      * @param {Number} seed
      */
-    constructor(board, solution, seed) {
-        this.cells = [];
-        this.solution = [];
-        this.seed = seed;
-        this.hintCount = 0;
+    static fromBoard(board, solution, seed) {
+        const result = new PuzzleBoard();
 
+        result.seed = seed;
         for (var x = 0; x < StructureDefinitions.SIZE; x++) {
             for (var y = 0; y < StructureDefinitions.SIZE; y++) {
                 const solutionValue = solution.getCell(x, y);
@@ -276,11 +287,19 @@ export default class PuzzleBoard {
                 const position = new Position(x, y);
                 const index = PuzzleBoard.toIndex(position);
 
-                this.solution[index] = solutionValue;
+                result.solution[index] = solutionValue;
 
                 const cell = new Cell(position, boardValue);
-                this.cells[index] = cell;
+                result.cells[index] = cell;
             }
         }
+
+        return result;
+    }
+
+    constructor() {
+        this.cells = [];
+        this.solution = [];
+        this.hintCount = 0;
     }
 }

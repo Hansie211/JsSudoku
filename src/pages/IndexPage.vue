@@ -1,13 +1,14 @@
 <template>
-    <q-page id="page">
+    <q-page id="page" v-if="puzzle">
         <div style="padding: 10px">
             <sudoku-board ref="sudoku" :puzzle="puzzle" :key="renderKey" size="4.8vw" @cellSelected="cellSelected" />
         </div>
         <div id="bottom-bar" class="flex column full-width">
             <div id="info-bar" class="flex row full-width q-px-sm">
-                <timer ref="timer" v-show="settings.showTime" class="text-caption" />
+                <timer ref="timer" v-show="settings.showTime" class="text-caption flex-center" />
                 <q-space />
-                <div class="text-caption">Hints {{ puzzle.hintCount }}</div>
+                <div class="text-caption q-mr-sm flex flex-center"><q-icon v-for="x in puzzle.difficultyLevel + 1" :key="x" name="star" color="yellow" /></div>
+                <div class="text-caption flex-center">Hints {{ puzzle.hintCount }}</div>
             </div>
             <div id="action-bar" class="full-width">
                 <div id="mode-bar" class="row q-pa-sm">
@@ -30,7 +31,6 @@
                 </div>
 
                 <number-bar :size="9" @click="placeNumber" :activeNumbers="activeNumbers" />
-                <!-- <q-icon :color="!selectedCell?.isStatic && !selectedCell?.value.value && selectedCell?.notes.hasValue(value) ? '' : 'transparent'" name="close" class="number-icon q-pa-none q-ma-none" padding="none" size="sm" /> -->
             </div>
         </div>
         <settings-dialog v-model="showSettings" :puzzle="puzzle" @resetGame="resetGame" @newLevel="newLevel" />
@@ -48,14 +48,41 @@ import Timer from "src/components/Timer.vue";
 import { useSettingsStore } from "src/stores/settings-store";
 import NumberBar from "src/components/NumberBar.vue";
 import Memory from "src/lib/memory";
+import { useQuasar } from "quasar";
+
+function ifThenElse(condition, then, other) {
+    if (condition) {
+        return then();
+    } else {
+        return other();
+    }
+}
 
 export default defineComponent({
     components: { SudokuBoard, SettingsDialog, Timer, NumberBar },
     name: "IndexPage",
     setup() {
         const settings = useSettingsStore();
-        const [solution, board, seed] = getPuzzle(20);
-        const puzzle = new PuzzleBoard(board, solution, seed);
+        const $q = useQuasar();
+
+        var initalTime = ref(0);
+
+        const savegame = $q.localStorage.getItem("savegame");
+        const savedBoard = PuzzleBoard.deserialize(savegame);
+        const puzzle = ifThenElse(
+            savedBoard,
+            () => {
+                initalTime.value = savegame.time;
+                return savedBoard;
+            },
+            () => {
+                initalTime.value = 0;
+                const [solution, board, seed] = getPuzzle(20);
+                const puzzle = PuzzleBoard.fromBoard(board, solution, seed);
+                puzzle.difficultyLevel = 0;
+                return puzzle;
+            }
+        );
 
         const memory = new Memory();
 
@@ -97,9 +124,18 @@ export default defineComponent({
             return true;
         },
 
+        saveGameState() {
+            const savegame = PuzzleBoard.serialize(this.puzzle);
+            savegame.time = this.$refs.timer.getTime();
+
+            this.$q.localStorage.set("savegame", savegame);
+        },
+
         initNewGame() {
             this.$refs.timer.reset();
             this.memory.clear();
+
+            this.saveGameState();
         },
         resetGame() {
             this.puzzle.cells.forEach((cell) => {
@@ -127,7 +163,8 @@ export default defineComponent({
 
             window.setTimeout(() => {
                 const [solution, board, seed] = getPuzzle(squareCount, levelInfo.seed);
-                this.puzzle = new PuzzleBoard(board, solution, seed);
+                this.puzzle = PuzzleBoard.fromBoard(board, solution, seed);
+                this.puzzle.difficultyLevel = levelInfo.level;
                 this.renderKey++;
                 this.$q.loading.hide();
 
@@ -146,6 +183,8 @@ export default defineComponent({
                 } else {
                     this.selectedCell.value = num;
                 }
+
+                this.saveGameState();
             } else {
                 if (this.selectedCell.hasValue()) {
                     this.showError("Cell already filled selected.");
@@ -153,12 +192,13 @@ export default defineComponent({
                     const hasValue = this.selectedCell.notes.hasValue(num);
                     this.memory.store(this.selectedCell.id, { num: num, set: hasValue }, 1);
                     this.selectedCell.notes.swapValue(num);
+
+                    this.saveGameState();
                 }
             }
         },
         clearCell() {
-            if (!this.canEditSelectedCell()) return;
-            this.selectedCell.value = 0;
+            placeNumber(0);
         },
         hint() {
             const nextOpenCell = this.puzzle.cells.find((cell) => !cell.value);
@@ -170,6 +210,8 @@ export default defineComponent({
 
             nextOpenCell.value = soltionValue;
             this.puzzle.hintCount++;
+
+            this.saveGameState();
         },
         cellSelected(id) {
             this.selectedCellId = id;
@@ -188,6 +230,8 @@ export default defineComponent({
                 const action = move.value.set ? cell.notes.addValue : cell.notes.removeValue;
                 action(move.value.num);
             }
+
+            this.saveGameState();
         },
     },
     computed: {
