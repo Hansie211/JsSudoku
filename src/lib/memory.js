@@ -35,7 +35,7 @@ export default class Memory {
     /** @type {Array<MemoryItem>} */
     data;
 
-    reset() {
+    clear() {
         this.data.length = 0;
     }
 
