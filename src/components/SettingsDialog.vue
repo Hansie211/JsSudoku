@@ -1,10 +1,10 @@
 <template>
     <q-dialog v-model="show">
-        <q-card class="my-card">
+        <q-card style="width: 80vw">
             <q-card-section>
                 <q-list style="font-size: 1.2em">
                     <q-item-label header>Options</q-item-label>
-                    <q-item clickable v-ripple v-for="setting in settingsToggles" :key="setting.name" @click="() => (setting.prop.value = !setting.prop.value)">
+                    <q-item class="text-body1" clickable v-ripple v-for="setting in settingsToggles" :key="setting.name" @click="() => (setting.prop.value = !setting.prop.value)">
                         <q-item-section> {{ setting.name }} </q-item-section>
                         <q-item-section side>
                             <q-toggle v-model="setting.prop.value" :icon="setting.icon" />
@@ -12,10 +12,11 @@
                     </q-item>
                 </q-list>
             </q-card-section>
-            <q-card-section class="q-gutter-y-sm">
+            <q-card-section class="q-gutter-y-md">
                 <div class="text-subtitle2">Current level: {{ puzzle.seed }}</div>
-                <q-btn label="Retry level" color="primary" class="full-width" @click="resetGame" />
-                <q-btn label="New level" color="primary" class="full-width" @click="newGame" />
+                <q-btn label="Retry level" flat color="negative" class="full-width" @click="resetGame" />
+                <q-btn label="New level" flat color="primary" class="full-width" @click="newGame" />
+                <q-btn label="History" flat color="primary" class="full-width" @click="showHistory" />
             </q-card-section>
 
             <q-separator />
@@ -31,6 +32,7 @@ import PuzzleBoard from "src/lib/reactiveSoduku";
 import { useSettingsStore } from "src/stores/settings-store";
 import { computed, defineComponent } from "vue";
 import NewLevelDialog from "./NewLevelDialog";
+import VictoryHistoryScreen from "./VictoryHistoryScreen.vue";
 
 export default defineComponent({
     name: "SettingsDialog",
@@ -95,7 +97,9 @@ export default defineComponent({
                 })
                 .onOk(() => {
                     this.$emit("resetGame");
+                    alert();
                     this.show = false;
+                    alert();
                 });
         },
         newGame() {
@@ -111,6 +115,14 @@ export default defineComponent({
                     this.$emit("newLevel", levelInfo);
                     this.show = false;
                 });
+        },
+        showHistory() {
+            this.$q.dialog({
+                component: VictoryHistoryScreen,
+                componentProps: {
+                    victories: this.$q.localStorage.getItem("victories")?.data ?? [],
+                },
+            });
         },
     },
     computed: {
