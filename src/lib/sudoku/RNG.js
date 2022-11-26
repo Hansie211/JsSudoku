@@ -35,8 +35,11 @@ export class RNG {
      * @param {(Number) => {() => Number}} RNGProvider
      */
     constructor(seed, RNGProvider) {
-        this.#seed = seed === undefined ? Math.floor(Math.random() * 4294967296) : seed;
-        this.#produceNext = RNGProvider ? RNGProvider(this.#seed) : getMulberry32Random(this.#seed);
+        if (seed === undefined) seed = Math.floor(Math.random() * 4294967296);
+        this.#seed = seed;
+        const providedSeed = (seed * 0xdeadbeef) % 4294967296;
+        const fn = RNGProvider ? RNGProvider : getMulberry32Random;
+        this.#produceNext = fn(providedSeed);
     }
 }
 
