@@ -5,10 +5,10 @@
         </div>
         <div id="bottom-bar" class="flex column full-width">
             <div id="info-bar" class="flex row full-width q-px-sm">
-                <timer ref="timer" v-show="settings.showTime" class="text-caption flex-center" />
+                <timer ref="timer" :initialValue="initalTime" v-show="settings.showTime" class="text-caption flex-center" />
                 <q-space />
                 <div class="text-caption q-mr-sm flex flex-center"><q-icon v-for="x in puzzle.difficultyLevel + 1" :key="x" name="star" color="yellow" /></div>
-                <div class="text-caption flex-center">Hints {{ puzzle.hintCount }}</div>
+                <div class="text-caption flex-center">Hints {{ hintCount }}</div>
             </div>
             <div id="action-bar" class="full-width">
                 <div id="mode-bar" class="row q-pa-sm">
@@ -43,19 +43,23 @@ import SettingsDialog from "src/components/SettingsDialog.vue";
 import { StructureDefinitions } from "src/lib/sudoku/board";
 import { getPuzzle } from "src/lib/sudoku/sudoku";
 import { defineComponent, reactive, ref } from "vue";
-import PuzzleBoard from "src/lib/reactiveSoduku";
+import PuzzleBoard, { Position } from "src/lib/reactiveSoduku";
 import Timer from "src/components/Timer.vue";
 import { useSettingsStore } from "src/stores/settings-store";
 import NumberBar from "src/components/NumberBar.vue";
 import Memory from "src/lib/memory";
 import { useQuasar } from "quasar";
+import VictoryScreen from "src/components/VictoryScreen.vue";
 
-function ifThenElse(condition, then, other) {
-    if (condition) {
-        return then();
-    } else {
-        return other();
-    }
+/**
+ * @template T
+ * @param {T} value
+ * @param {() => {T}} createFn
+ * @returns {T}
+ */
+function valueOrCreate(value, createFn) {
+    if (value) return value;
+    return createFn();
 }
 
 export default defineComponent({
@@ -65,26 +69,17 @@ export default defineComponent({
         const settings = useSettingsStore();
         const $q = useQuasar();
 
-        var initalTime = ref(0);
-
         const savegame = $q.localStorage.getItem("savegame");
-        const savedBoard = PuzzleBoard.deserialize(savegame);
-        const puzzle = ifThenElse(
-            savedBoard,
-            () => {
-                initalTime.value = savegame.time;
-                return savedBoard;
-            },
-            () => {
-                initalTime.value = 0;
-                const [solution, board, seed] = getPuzzle(20);
-                const puzzle = PuzzleBoard.fromBoard(board, solution, seed);
-                puzzle.difficultyLevel = 0;
-                return puzzle;
-            }
-        );
+        const puzzle = valueOrCreate(PuzzleBoard.deserialize(savegame ?? null), () => {
+            const [solution, board, seed] = getPuzzle(20);
+            const puzzle = PuzzleBoard.fromBoard(board, solution, seed);
+            puzzle.difficultyLevel = 0;
+            return puzzle;
+        });
 
-        const memory = new Memory();
+        const initalTime = ref(valueOrCreate(savegame.time, () => 0));
+        const hintCount = ref(valueOrCreate(savegame.hintCount, () => 0));
+        const memory = valueOrCreate(Memory.deserialize(savegame.memory ?? null), () => new Memory());
 
         return {
             settings,
@@ -92,6 +87,8 @@ export default defineComponent({
             puzzle: reactive(puzzle),
             noteMode: ref(false),
             renderKey: ref(0),
+            initalTime,
+            hintCount,
         };
     },
     data() {
@@ -127,13 +124,44 @@ export default defineComponent({
         saveGameState() {
             const savegame = PuzzleBoard.serialize(this.puzzle);
             savegame.time = this.$refs.timer.getTime();
+            savegame.hintCount = this.hintCount;
+            savegame.memory = Memory.serialize(this.memory);
 
             this.$q.localStorage.set("savegame", savegame);
+        },
+        isVictory() {
+            return this.puzzle.cells.reduce((state, cell, idx) => state && this.puzzle.solution[idx] === cell.value, true);
+        },
+        showVictory() {
+            if (!this.isVictory()) return;
+
+            const time = this.$refs.timer.getTime();
+
+            const victories = this.$q.localStorage.getItem("victories")?.data ?? [];
+            victories.push({
+                level: this.puzzle.seed,
+                time: time,
+                hintCount: this.hintCount,
+                difficultyLevel: this.puzzle.difficultyLevel,
+            });
+            this.$q.localStorage.set("victories", { data: victories });
+
+            this.$q
+                .dialog({
+                    component: VictoryScreen,
+                    componentProps: {
+                        puzzle: this.puzzle,
+                        time: this.$refs.timer.getTime(),
+                        hintCount: this.hintCount,
+                    },
+                })
+                .onOk(this.newLevel);
         },
 
         initNewGame() {
             this.$refs.timer.reset();
             this.memory.clear();
+            this.hintCount = 0;
 
             this.saveGameState();
         },
@@ -182,6 +210,7 @@ export default defineComponent({
                     this.selectedCell.value = 0;
                 } else {
                     this.selectedCell.value = num;
+                    this.showVictory();
                 }
 
                 this.saveGameState();
@@ -209,7 +238,9 @@ export default defineComponent({
             this.memory.store(nextOpenCell.id, { num: nextOpenCell.value, hint: true }, 0);
 
             nextOpenCell.value = soltionValue;
-            this.puzzle.hintCount++;
+            this.hintCount++;
+
+            this.showVictory();
 
             this.saveGameState();
         },
@@ -224,7 +255,7 @@ export default defineComponent({
 
             if (move.mode === 0) {
                 cell.value = move.value.num;
-                if (move.value.hint === true) this.puzzle.hintCount--;
+                if (move.value.hint === true) this.hintCount--;
                 return;
             } else {
                 const action = move.value.set ? cell.notes.addValue : cell.notes.removeValue;
