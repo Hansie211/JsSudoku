@@ -20,7 +20,7 @@ export default defineComponent({
     // eslint-disable-next-line vue/multi-word-component-names
     name: "Timer",
     emits: ["update"],
-    exposes: ["reset"],
+    exposes: ["reset", "getTime"],
     props: {
         initialValue: {
             type: Number,
@@ -59,6 +59,9 @@ export default defineComponent({
     methods: {
         reset() {
             this.seconds = 0;
+        },
+        getTime() {
+            return this.seconds;
         },
     },
     computed: {
