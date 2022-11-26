@@ -77,9 +77,9 @@ export default defineComponent({
             return puzzle;
         });
 
-        const initalTime = ref(valueOrCreate(savegame.time, () => 0));
-        const hintCount = ref(valueOrCreate(savegame.hintCount, () => 0));
-        const memory = valueOrCreate(Memory.deserialize(savegame.memory ?? null), () => new Memory());
+        const initalTime = ref(valueOrCreate(savegame?.time, () => 0));
+        const hintCount = ref(valueOrCreate(savegame?.hintCount, () => 0));
+        const memory = valueOrCreate(Memory.deserialize(savegame?.memory ?? null), () => new Memory());
 
         return {
             settings,
