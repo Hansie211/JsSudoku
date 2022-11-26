@@ -4,7 +4,7 @@
             <sudoku-board ref="sudoku" :puzzle="puzzle" :key="renderKey" size="4.8vw" @cellSelected="cellSelected" />
         </div>
         <div id="bottom-bar" class="flex column full-width">
-            <timer v-show="settings.showTime" class="q-pl-sm" />
+            <timer ref="timer" v-show="settings.showTime" class="q-pl-sm" />
             <div id="action-bar" class="full-width">
                 <div id="mode-bar" class="row q-pa-sm">
                     <q-btn
@@ -70,6 +70,7 @@ export default defineComponent({
                 cell.value.value = 0;
                 cell.notes.values.value.length = 0;
             });
+            this.$refs.timer.reset();
         },
         newLevel(levelInfo) {
             const emptySquares = {
@@ -85,14 +86,14 @@ export default defineComponent({
                 message: "Generating level...",
                 delay: 1,
             });
-            this.$nextTick(() => {
-                window.setTimeout(() => {
-                    const [solution, board, seed] = getPuzzle(squareCount, levelInfo.seed);
-                    this.puzzle = new PuzzleBoard(board, solution, seed);
-                    this.renderKey++;
-                    this.$q.loading.hide();
-                }, 100);
-            });
+
+            window.setTimeout(() => {
+                const [solution, board, seed] = getPuzzle(squareCount, levelInfo.seed);
+                this.puzzle = new PuzzleBoard(board, solution, seed);
+                this.renderKey++;
+                this.$q.loading.hide();
+                this.$refs.timer.reset();
+            }, 100);
         },
         canEditSelectedCell() {
             if (!this.selectedCell) {

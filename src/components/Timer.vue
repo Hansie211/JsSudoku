@@ -5,14 +5,32 @@
 import { defineComponent, ref, watch } from "vue";
 import { useQuasar } from "quasar";
 
+/**
+ * @param {String} str
+ * @param {Number} defaultValue
+ * @returns {Number}
+ */
+function parseDefault(str, defaultValue) {
+    const num = parseInt(str);
+    if (isNaN(num)) return defaultValue;
+    return num;
+}
+
 export default defineComponent({
     // eslint-disable-next-line vue/multi-word-component-names
     name: "Timer",
     emits: ["update"],
-    setup(_, context) {
+    exposes: ["reset"],
+    props: {
+        initialValue: {
+            type: Number,
+            default: 0,
+        },
+    },
+    setup(props, context) {
         const $q = useQuasar();
 
-        const seconds = ref(0);
+        const seconds = ref(parseDefault(props.initialValue, 0));
         const timer = ref(0);
 
         const updateTimer = () => {
@@ -37,6 +55,11 @@ export default defineComponent({
             seconds,
             timer,
         };
+    },
+    methods: {
+        reset() {
+            this.seconds = 0;
+        },
     },
     computed: {
         time() {
