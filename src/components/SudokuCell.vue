@@ -94,22 +94,30 @@ export default defineComponent({
 }
 
 .cell {
+    position: relative;
+
     height: 2.1em;
     width: 2.1em;
     font-size: v-bind(size);
     font-weight: v-bind(weight);
+
     display: flex;
     justify-content: center;
     align-items: center;
     background-color: white;
 
     cursor: pointer;
-
     border: 0.1em solid transparent;
 
-    position: relative;
-
     font-family: "Nanum Brush Script", cursive;
+
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+    -khtml-user-select: none; /* Konqueror HTML */
+    -moz-user-select: none; /* Old versions of Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+    user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
 }
 
 .cell:not(.static) > span {
