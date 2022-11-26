@@ -84,6 +84,15 @@ export default defineComponent({
 </script>
 <style scoped>
 @import url("https://fonts.googleapis.com/css2?family=Nanum+Brush+Script&display=swap");
+
+@font-face {
+    font-family: "Nanum Brush Script";
+    font-style: normal;
+    font-weight: 400;
+    src: url("~assets/fonts/NanumBrushScript-Regular.ttf");
+    src: local(""), url("~assets/fonts/NanumBrushScript-Regular.woff2") format("woff2"), url("~assets/fonts/NanumBrushScript-Regular.woff2") format("woff"), url("~assets/fonts/NanumBrushScript-Regular.ttf") format("truetype");
+}
+
 .cell {
     height: 2.1em;
     width: 2.1em;
