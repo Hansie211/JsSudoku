@@ -10,7 +10,7 @@
                 <q-btn v-for="level in difficultyLevels" :key="level.level" color="primary" outline size="lg" align="left" :label="level.name" class="full-width" @click="() => onOKClick(level.level)"><q-space /><q-icon v-for="x in level.level + 1" :key="x" name="star" color="yellow" /></q-btn>
             </q-card-section>
             <q-card-section>
-                <q-btn label="Cancel" class="full-width" color="negative" @click="onCancelClick" # />
+                <q-btn label="Cancel" class="full-width" color="negative" @click="onCancelClick" />
             </q-card-section>
         </q-card>
     </q-dialog>
