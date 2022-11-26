@@ -97,9 +97,7 @@ export default defineComponent({
                 })
                 .onOk(() => {
                     this.$emit("resetGame");
-                    alert();
                     this.show = false;
-                    alert();
                 });
         },
         newGame() {
