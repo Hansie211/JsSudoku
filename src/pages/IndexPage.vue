@@ -35,12 +35,13 @@
 import SudokuBoard from "src/components/SudokuBoard.vue";
 import SettingsDialog from "src/components/SettingsDialog.vue";
 import { StructureDefinitions } from "src/lib/sudoku/board";
-import { getPuzzle, getPuzzleAsync } from "src/lib/sudoku/sudoku";
+import { getPuzzle } from "src/lib/sudoku/sudoku";
 import { defineComponent, ref } from "vue";
 import PuzzleBoard from "src/lib/reactiveSoduku";
 import Timer from "src/components/Timer.vue";
 import { useSettingsStore } from "src/stores/settings-store";
 import NumberBar from "src/components/NumberBar.vue";
+import Memory from "src/lib/memory";
 
 export default defineComponent({
     components: { SudokuBoard, SettingsDialog, Timer, NumberBar },
@@ -50,8 +51,11 @@ export default defineComponent({
         const [solution, board, seed] = getPuzzle(20);
         const puzzle = new PuzzleBoard(board, solution, seed);
 
+        const memory = new Memory();
+
         return {
             settings,
+            memory,
             puzzle,
             noteMode: ref(false),
             renderKey: ref(0),
@@ -64,13 +68,41 @@ export default defineComponent({
         };
     },
     methods: {
+        showError(text) {
+            this.$q.notify({
+                message: text,
+                group: false,
+                type: "negative",
+                timeout: 1000,
+                actions: [{ icon: "close", color: "white" }],
+            });
+        },
+        canEditSelectedCell() {
+            if (!this.selectedCell) {
+                this.showError("No cell selected.");
+                return false;
+            }
+
+            if (this.selectedCell.isStatic) {
+                this.showError("Cannot edit this cell.");
+                return false;
+            }
+
+            return true;
+        },
+
+        initNewGame() {
+            this.$refs.timer.reset();
+            this.memory.clear();
+        },
         resetGame() {
             this.puzzle.cells.forEach((cell) => {
                 if (cell.isStatic) return;
                 cell.value.value = 0;
                 cell.notes.values.value.length = 0;
             });
-            this.$refs.timer.reset();
+
+            this.initNewGame();
         },
         newLevel(levelInfo) {
             const emptySquares = {
@@ -92,38 +124,17 @@ export default defineComponent({
                 this.puzzle = new PuzzleBoard(board, solution, seed);
                 this.renderKey++;
                 this.$q.loading.hide();
-                this.$refs.timer.reset();
+
+                this.initNewGame();
             }, 100);
         },
-        canEditSelectedCell() {
-            if (!this.selectedCell) {
-                this.$q.notify({
-                    message: "No cell selected.",
-                    group: false,
-                    type: "negative",
-                    timeout: 1000,
-                    actions: [{ icon: "close", color: "white" }],
-                });
-                return false;
-            }
 
-            if (this.selectedCell.isStatic) {
-                this.$q.notify({
-                    message: "Cannot edit this cell.",
-                    group: false,
-                    type: "negative",
-                    timeout: 1000,
-                    actions: [{ icon: "close", color: "white" }],
-                });
-                return false;
-            }
-
-            return true;
-        },
         placeNumber(num) {
             if (!this.canEditSelectedCell()) return;
 
             if (!this.noteMode) {
+                this.memory.store(this.selectedCell.id, this.selectedCell.value, 0);
+
                 if (this.selectedCell.value.value === num) {
                     this.selectedCell.value.value = 0;
                 } else {
@@ -131,14 +142,10 @@ export default defineComponent({
                 }
             } else {
                 if (this.selectedCell.hasValue()) {
-                    this.$q.notify({
-                        message: "Cell already filled selected.",
-                        group: false,
-                        type: "negative",
-                        timeout: 1000,
-                        actions: [{ icon: "close", color: "white" }],
-                    });
+                    this.showError("Cell already filled selected.");
                 } else {
+                    const hasValue = this.selectedCell.notes.hasValue(num);
+                    this.memory.store(this.selectedCell.id, { num: this.selectedCell.value, set: hasValue }, 1);
                     this.selectedCell.notes.swapValue(num);
                 }
             }
@@ -150,6 +157,19 @@ export default defineComponent({
 
         cellSelected(id) {
             this.selectedCellId = id;
+        },
+        undo() {
+            if (!this.memory.size) return;
+
+            const move = this.memory.rollBack();
+            const cell = this.puzzle.cells.find((cell) => cell.id === move.cellId);
+
+            if (move.mode === 0) {
+                cell.value.value = move.value;
+            } else {
+                const action = move.value.set ? cell.notes.addValue : cell.notes.removeValue;
+                action(move.value.num);
+            }
         },
     },
     computed: {
