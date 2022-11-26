@@ -1,13 +1,13 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
-import version from "src/data/version.json";
+import versions from "src/data/version.json";
 
 export const useSettingsStore = defineStore("settings", () => {
     const showErrors = ref(true);
     const showTime = ref(true);
     const showHints = ref(true);
 
-    const version = `v${version.major}.${version.minor}.${version.revision}`;
+    const version = `v${versions.major}.${versions.minor}.${versions.rev}`;
 
     return {
         showErrors,
