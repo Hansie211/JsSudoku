@@ -14,6 +14,7 @@
             </q-card-section>
             <q-card-section class="q-gutter-y-md">
                 <div class="text-subtitle2">Current level: {{ puzzle.seed }}</div>
+                <q-btn label="Clear data" flat color="negative" class="full-width" @click="clearCache" />
                 <q-btn label="Retry level" flat color="negative" class="full-width" @click="resetGame" />
                 <q-btn label="New level" flat color="primary" class="full-width" @click="newGame" />
                 <q-btn label="History" flat color="primary" class="full-width" @click="showHistory" />
@@ -98,6 +99,23 @@ export default defineComponent({
                 .onOk(() => {
                     this.$emit("resetGame");
                     this.show = false;
+                });
+        },
+        clearCache() {
+            this.$q
+                .dialog({
+                    title: "Warning",
+                    message: "Are you sure? This will remove your current save game and the victory history. You cannot reverse this action.",
+                    cancel: true,
+                    persistent: true,
+                    ok: {
+                        label: "Continue",
+                        color: "negative",
+                    },
+                })
+                .onOk(() => {
+                    this.$q.localStorage.clear();
+                    location.reload();
                 });
         },
         newGame() {
