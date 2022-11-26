@@ -184,6 +184,52 @@ export default class PuzzleBoard {
     hintCount;
 
     /**
+     * @param {PuzzleBoard} puzzle
+     * @returns {String}
+     */
+    static serialize(puzzle) {
+        const obj = {
+            cells: puzzle.cells.map((cell) => {
+                return {
+                    value: cell.value.value,
+                    x: cell.position.x,
+                    y: cell.position.y,
+                    notes: cell.notes.values.value,
+                    static: cell.isStatic,
+                };
+            }),
+            solution: puzzle.solution,
+            hintCount: puzzle.hintCount.value,
+        };
+
+        return JSON.stringify(obj);
+    }
+
+    /**
+     * @param {String} puzzle
+     * @returns {PuzzleBoard}
+     */
+    static deserialize(str) {
+        const obj = JSON.parse(str);
+        const result = Object.create(PuzzleBoard.prototype, {
+            cells: obj.cells.map((info) => {
+                const pos = new Position(info.x, info.y);
+                const cell = new Cell(pos, info.static ? info.value : 0);
+                if (!info.static) cell.value.value = info.value;
+
+                cell.notes.values.value = info.notes;
+
+                return cell;
+            }),
+
+            solution: obj.solution,
+            hintCount: ref(obj.hintCount),
+        });
+
+        return result;
+    }
+
+    /**
      * @param {Position} position
      * @returns {Number}
      */
