@@ -1,35 +1,35 @@
-export class MemoryItem {
-    /** @type {Number} */
-    #cellId;
-    /** @type {Object} */
-    #value;
-    /** @type {Number} */
-    #mode;
+// export class MemoryItem {
+//     /** @type {Number} */
+//     #cellId;
+//     /** @type {Object} */
+//     #value;
+//     /** @type {Number} */
+//     #mode;
 
-    /** @returns {Number} */
-    get cellId() {
-        return this.#cellId;
-    }
-    /** @returns {Object} */
-    get value() {
-        return this.#value;
-    }
-    /** @returns {Number} */
-    get mode() {
-        return this.#mode;
-    }
+//     /** @returns {Number} */
+//     get cellId() {
+//         return this.#cellId;
+//     }
+//     /** @returns {Object} */
+//     get value() {
+//         return this.#value;
+//     }
+//     /** @returns {Number} */
+//     get mode() {
+//         return this.#mode;
+//     }
 
-    /**
-     * @param {Number} cellId
-     * @param {Object} value
-     * @param {Number} mode
-     */
-    constructor(cellId, value, mode) {
-        this.#cellId = cellId;
-        this.#value = value;
-        this.#mode = mode;
-    }
-}
+//     /**
+//      * @param {Number} cellId
+//      * @param {Object} value
+//      * @param {Number} mode
+//      */
+//     constructor(cellId, value, mode) {
+//         this.#cellId = cellId;
+//         this.#value = value;
+//         this.#mode = mode;
+//     }
+// }
 
 export default class Memory {
     /** @type {Array<Array<State>>} */
@@ -74,6 +74,7 @@ export default class Memory {
      * @param {Array<State>} states
      */
     store(states) {
+        if (!Array.isArray(states)) states = [states];
         this.data.push(states);
     }
 

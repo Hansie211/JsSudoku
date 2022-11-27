@@ -43,25 +43,13 @@ import SettingsDialog from "src/components/SettingsDialog.vue";
 import { StructureDefinitions } from "src/lib/sudoku/board";
 import { getPuzzle } from "src/lib/sudoku/sudoku";
 import { defineComponent, reactive, ref } from "vue";
-import PuzzleBoard, { Cell, Position } from "src/lib/reactiveSoduku";
+import PuzzleBoard, { Cell } from "src/lib/reactiveSoduku";
 import Timer from "src/components/Timer.vue";
 import { useSettingsStore } from "src/stores/settings-store";
 import NumberBar from "src/components/NumberBar.vue";
 import Memory from "src/lib/memory";
-import { useQuasar } from "quasar";
 import VictoryScreen from "src/components/VictoryScreen.vue";
 import { SaveManager, Savestate } from "src/lib/savegame";
-
-/**
- * @template T
- * @param {T} value
- * @param {() => {T}} createFn
- * @returns {T}
- */
-function valueOrCreate(value, createFn) {
-    if (value) return value;
-    return createFn();
-}
 
 export default defineComponent({
     components: { SudokuBoard, SettingsDialog, Timer, NumberBar },
@@ -74,9 +62,11 @@ export default defineComponent({
             settings,
             saveManager,
             renderKey: ref(0),
+            /** @type {PuzzleBoard} */
             puzzle: reactive(null),
             initalTime: ref(0),
             hintCount: ref(0),
+            /** @type {Memory} */
             memory: null,
         };
     },
@@ -181,6 +171,21 @@ export default defineComponent({
                 })
                 .onOk(this.newLevel);
         },
+        /**
+         * @param {Number} cellId
+         * @param {Number} value
+         * @param {Boolean} isNote
+         * @param {Boolean} isHint
+         * @returns {Object}
+         */
+        createState(cellId, value, isNote, isHint) {
+            return {
+                cellId,
+                value: JSON.stringify(value),
+                isNote: isNote === true,
+                isHint: isHint === true,
+            };
+        },
 
         initNewGame() {
             this.$refs.timer.reset();
@@ -228,7 +233,8 @@ export default defineComponent({
             if (!this.canEditSelectedCell()) return;
 
             if (!this.noteMode) {
-                this.memory.store(this.selectedCell.id, { num: this.selectedCell.value, hint: false }, 0);
+                const state = this.createState(this.selectedCellId, this.selectedCell.value, false, false);
+                this.memory.store(state);
 
                 if (this.selectedCell.value === num) {
                     this.selectedCell.value = 0;
@@ -242,8 +248,9 @@ export default defineComponent({
                 if (this.selectedCell.hasValue()) {
                     this.showError("Cell already filled selected.");
                 } else {
-                    const hasValue = this.selectedCell.notes.hasValue(num);
-                    this.memory.store(this.selectedCell.id, { num: num, set: hasValue }, 1);
+                    const state = this.createState(this.selectedCellId, this.selectedCell.notes.values, true, false);
+                    this.memory.store(state);
+
                     this.selectedCell.notes.swapValue(num);
 
                     this.saveGameState();
@@ -257,13 +264,19 @@ export default defineComponent({
             if (clearNotes && !this.selectedCell.notes.values.length) return;
 
             switch (clearNotes) {
-                case true:
-                    //TODO: undo?
+                case true: {
+                    const state = this.createState(this.selectedCellId, this.selectedCell.notes.values, true, false);
+                    this.memory.store(state);
+
                     this.selectedCell.notes.clear();
                     break;
-                case false:
-                    this.memory.store(this.selectedCell.id, { num: this.selectedCell.value, hint: false }, 0);
+                }
+                case false: {
+                    const state = this.createState(this.selectedCellId, this.selectedCell.value, false, false);
+                    this.memory.store(state);
+
                     this.selectedCell.value = 0;
+                }
             }
 
             this.saveGameState();
@@ -274,7 +287,8 @@ export default defineComponent({
 
             const soltionValue = this.puzzle.solution[PuzzleBoard.toIndex(nextOpenCell.position)];
 
-            this.memory.store(nextOpenCell.id, { num: nextOpenCell.value, hint: true }, 0);
+            const state = this.createState(nextOpenCell.id, 0, false, true);
+            this.memory.store(state);
 
             nextOpenCell.value = soltionValue;
             this.hintCount++;
@@ -289,17 +303,24 @@ export default defineComponent({
         undo() {
             if (!this.memory.size) return;
 
-            const move = this.memory.rollBack();
-            const cell = this.puzzle.findCellById(move.cellId);
+            const states = this.memory.rollBack();
 
-            if (move.mode === 0) {
-                cell.value = move.value.num;
-                if (move.value.hint === true) this.hintCount--;
-                return;
-            } else {
-                const action = move.value.set ? cell.notes.addValue : cell.notes.removeValue;
-                action(move.value.num);
-            }
+            states.forEach((state) => {
+                const cell = this.puzzle.findCellById(state.cellId);
+                const value = JSON.parse(state.value);
+                switch (state.isNote) {
+                    case false: {
+                        cell.value = value;
+                        break;
+                    }
+                    case true: {
+                        cell.notes.set(value);
+                        break;
+                    }
+                }
+
+                if (state.isHint) this.hintCount--;
+            });
 
             this.saveGameState();
         },
