@@ -24,7 +24,6 @@
 </template>
 
 <script>
-import { ref } from "vue";
 import PuzzleBoard from "src/lib/reactiveSoduku";
 import NewLevelDialog from "./NewLevelDialog.vue";
 export default {
