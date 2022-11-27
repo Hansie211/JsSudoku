@@ -72,6 +72,14 @@ export class Notes {
         this.values.length = 0;
     }
 
+    /**
+     * @param {Array<Number>} values
+     */
+    set(values) {
+        this.values.length = 0;
+        values.forEach((v) => this.values.push(v));
+    }
+
     constructor() {
         this.values = reactive([]);
 
@@ -80,6 +88,7 @@ export class Notes {
         this.removeValue = this.removeValue.bind(this);
         this.swapValue = this.swapValue.bind(this);
         this.clear = this.clear.bind(this);
+        this.set = this.set.bind(this);
     }
 }
 
