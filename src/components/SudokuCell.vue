@@ -109,8 +109,6 @@ export default defineComponent({
     cursor: pointer;
     border: 0.1em solid transparent;
 
-    font-family: "Nanum Brush Script", cursive;
-
     -webkit-touch-callout: none; /* iOS Safari */
     -webkit-user-select: none; /* Safari */
     -khtml-user-select: none; /* Konqueror HTML */
@@ -124,6 +122,7 @@ export default defineComponent({
     font-weight: 100;
     font-size: 2.5em;
     color: #020b4a;
+    font-family: "Nanum Brush Script", cursive;
 }
 
 .cell.static {
@@ -141,9 +140,8 @@ export default defineComponent({
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(3, 1fr);
     gap: 1px;
-    font-size: 0.65em;
+    font-size: 0.6em;
     line-height: 1em;
-    font-style: italic;
 }
 
 #notes > div {
