@@ -68,6 +68,10 @@ export class Notes {
         }
     }
 
+    clear() {
+        this.values.length = 0;
+    }
+
     constructor() {
         this.values = reactive([]);
 
@@ -75,6 +79,7 @@ export class Notes {
         this.addValue = this.addValue.bind(this);
         this.removeValue = this.removeValue.bind(this);
         this.swapValue = this.swapValue.bind(this);
+        this.clear = this.clear.bind(this);
     }
 }
 
