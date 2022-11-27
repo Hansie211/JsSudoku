@@ -50,6 +50,7 @@ import NumberBar from "src/components/NumberBar.vue";
 import Memory from "src/lib/memory";
 import { useQuasar } from "quasar";
 import VictoryScreen from "src/components/VictoryScreen.vue";
+import { SaveManager, Savestate } from "src/lib/savegame";
 
 /**
  * @template T
@@ -67,32 +68,60 @@ export default defineComponent({
     name: "IndexPage",
     setup() {
         const settings = useSettingsStore();
-        const $q = useQuasar();
-
-        const savegame = $q.localStorage.getItem("savegame");
-        const puzzle = valueOrCreate(PuzzleBoard.deserialize(savegame ?? null), () => {
-            const [solution, board, seed] = getPuzzle(20);
-            const puzzle = PuzzleBoard.fromBoard(board, solution, seed);
-            puzzle.difficultyLevel = 0;
-            return puzzle;
-        });
-
-        const initalTime = ref(valueOrCreate(savegame?.time, () => 0));
-        const hintCount = ref(valueOrCreate(savegame?.hintCount, () => 0));
-        const memory = valueOrCreate(Memory.deserialize(savegame?.memory ?? null), () => new Memory());
+        const saveManager = new SaveManager("game");
 
         return {
             settings,
-            memory,
-            puzzle: reactive(puzzle),
-            noteMode: ref(false),
+            saveManager,
             renderKey: ref(0),
-            initalTime,
-            hintCount,
+            puzzle: reactive(null),
+            initalTime: ref(0),
+            hintCount: ref(0),
+            memory: null,
         };
+    },
+    created() {
+        this.saveManager.states.push(
+            new Savestate(
+                "puzzle",
+                () => this.puzzle,
+                (v) => (this.puzzle = v),
+                () => {
+                    const [solution, board, seed] = getPuzzle(20);
+                    const puzzle = PuzzleBoard.fromBoard(board, solution, seed);
+                    puzzle.difficultyLevel = 0;
+                    return puzzle;
+                },
+                PuzzleBoard.serialize,
+                PuzzleBoard.deserialize
+            ),
+            new Savestate(
+                "time",
+                () => this.initalTime,
+                (v) => (this.initalTime = v),
+                () => 0
+            ),
+            new Savestate(
+                "hintCount",
+                () => this.hintCount,
+                (v) => (this.hintCount = v),
+                () => 0
+            ),
+            new Savestate(
+                "memory",
+                () => this.memory,
+                (v) => (this.memory = v),
+                () => new Memory(),
+                Memory.serialize,
+                Memory.deserialize
+            )
+        );
+
+        this.saveManager.load();
     },
     data() {
         return {
+            noteMode: false,
             selectedCellId: null,
             showSettings: false,
         };
@@ -122,12 +151,7 @@ export default defineComponent({
         },
 
         saveGameState() {
-            const savegame = PuzzleBoard.serialize(this.puzzle);
-            savegame.time = this.$refs.timer.getTime();
-            savegame.hintCount = this.hintCount;
-            savegame.memory = Memory.serialize(this.memory);
-
-            this.$q.localStorage.set("savegame", savegame);
+            this.saveManager.save();
         },
         isVictory() {
             return this.puzzle.cells.reduce((state, cell, idx) => state && this.puzzle.solution[idx] === cell.value, true);
