@@ -32,7 +32,7 @@ export class MemoryItem {
 }
 
 export default class Memory {
-    /** @type {Array<MemoryItem>} */
+    /** @type {Array<Array<State>>} */
     data;
 
     /**
@@ -40,13 +40,7 @@ export default class Memory {
      * @returns {Object}
      */
     static serialize(memory) {
-        return memory.data.map((mem) => {
-            return {
-                cellId: mem.cellId,
-                value: mem.value,
-                mode: mem.mode,
-            };
-        });
+        return memory.data.map((state) => JSON.stringify(state));
     }
 
     /**
@@ -54,19 +48,14 @@ export default class Memory {
      * @returns {Memory}
      */
     static deserialize(data) {
-        if (data === null) return null;
-        try {
-            const result = new Memory();
+        const result = new Memory();
 
-            data.forEach((item) => {
-                result.store(item.cellId, item.value, item.mode);
-            });
+        data.forEach((item) => {
+            const state = JSON.parse(item);
+            result.data.push(state);
+        });
 
-            return result;
-        } catch (error) {
-            console.warn("Cannot deserialize", data, error);
-            return null;
-        }
+        return result;
     }
 
     clear() {
@@ -82,13 +71,10 @@ export default class Memory {
     }
 
     /**
-     * @param {Number} cellId
-     * @param {Object} value
-     * @param {Number} mode
+     * @param {Array<State>} states
      */
-    store(cellId, value, mode) {
-        const item = new MemoryItem(cellId, value, mode);
-        this.data.push(item);
+    store(states) {
+        this.data.push(states);
     }
 
     /** @returns {Number} */
