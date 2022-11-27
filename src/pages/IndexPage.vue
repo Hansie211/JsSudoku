@@ -43,7 +43,7 @@ import SettingsDialog from "src/components/SettingsDialog.vue";
 import { StructureDefinitions } from "src/lib/sudoku/board";
 import { getPuzzle } from "src/lib/sudoku/sudoku";
 import { defineComponent, reactive, ref } from "vue";
-import PuzzleBoard, { Position } from "src/lib/reactiveSoduku";
+import PuzzleBoard, { Cell, Position } from "src/lib/reactiveSoduku";
 import Timer from "src/components/Timer.vue";
 import { useSettingsStore } from "src/stores/settings-store";
 import NumberBar from "src/components/NumberBar.vue";
@@ -251,7 +251,22 @@ export default defineComponent({
             }
         },
         clearCell() {
-            this.placeNumber(0);
+            if (!this.canEditSelectedCell()) return;
+
+            const clearNotes = !this.selectedCell.hasValue();
+            if (clearNotes && !this.selectedCell.notes.values.length) return;
+
+            switch (clearNotes) {
+                case true:
+                    //TODO: undo?
+                    this.selectedCell.notes.clear();
+                    break;
+                case false:
+                    this.memory.store(this.selectedCell.id, { num: this.selectedCell.value, hint: false }, 0);
+                    this.selectedCell.value = 0;
+            }
+
+            this.saveGameState();
         },
         hint() {
             const nextOpenCell = this.puzzle.cells.find((cell) => !cell.value);
@@ -296,6 +311,7 @@ export default defineComponent({
         // selectedCellIndex() {
         //     return -1; //this.puzzle.cells.findIndex((x) => x.id === this.selectedCellId);
         // },
+        /** @returns {Cell} */
         selectedCell() {
             return this.puzzle.findCellById(this.selectedCellId);
         },
