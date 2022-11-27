@@ -1,6 +1,6 @@
 <template>
     <q-dialog ref="dialog" @hide="onDialogHide" persistent>
-        <q-card class="q-dialog-plugin q-gutter-md">
+        <q-card class="q-dialog-plugin q-pa-sm">
             <q-card-section class="text-h2"> You Won! </q-card-section>
             <q-card-section class="q-gutter-y-md text-h6">
                 <div class="text-h6 row items-center">
