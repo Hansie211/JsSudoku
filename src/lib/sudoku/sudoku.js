@@ -47,8 +47,8 @@ export function getPuzzle(emptySquares, seed) {
         const value = puzzleBoard.getCell(x, y);
         puzzleBoard.setCell(x, y, 0);
 
-        const solutions = solver.getSolutions(puzzleBoard, 2, rng);
-        if (solutions.length > 1) {
+        const solutions = solver.getSolutions(puzzleBoard, 2, rng, true);
+        if (solutions.length !== 1) {
             puzzleBoard.setCell(x, y, value); // core number
         } else {
             squaresRemoved++;
@@ -183,15 +183,17 @@ export class Solver {
      * @param {Board} inputBoard
      * @param {Number} maxCount
      * @param {RNG} rng
+     * @param {Boolean} doNotGuess
      * @param {Notebook} inputNotebook
      * @param {Boolean} cloneInput
      * @param {Number} foundCount
      * @returns {Array<Board>}
      */
-    getSolutions(inputBoard, maxCount, rng, inputNotebook, cloneInput, foundCount) {
+    getSolutions(inputBoard, maxCount, rng, doNotGuess, inputNotebook, cloneInput, foundCount) {
         cloneInput = cloneInput !== false;
         maxCount = maxCount ? maxCount : 1;
         rng = rng ?? new RNG();
+        doNotGuess = doNotGuess === true;
         foundCount = foundCount ?? 0;
 
         const board = cloneInput ? inputBoard.clone() : inputBoard;
@@ -208,7 +210,7 @@ export class Solver {
             throw error;
         }
 
-        if (board.isFinished()) return board.isValid() ? [board] : [];
+        if (doNotGuess || board.isFinished()) return board.isValid() ? [board] : [];
 
         const [x, y] = notebook.getCellWithLeastOptions();
         const note = notebook.getNotesForCell(x, y);
@@ -225,7 +227,7 @@ export class Solver {
 
             this.#cascadeFill(cloneBook, x, y, option);
 
-            const newSolutions = this.getSolutions(cloneBoard, maxCount, rng, cloneBook, false, foundCount + foundSolutions.length);
+            const newSolutions = this.getSolutions(cloneBoard, maxCount, rng, doNotGuess, cloneBook, false, foundCount + foundSolutions.length);
             foundSolutions = foundSolutions.concat(newSolutions);
 
             if (foundSolutions.length + foundCount >= maxCount) return foundSolutions;
