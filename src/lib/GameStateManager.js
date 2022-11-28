@@ -44,8 +44,8 @@ export default class GameStateManager {
             new Savestate(
                 "time",
                 () => stateManager.timer.time,
-                (state) => (stateManager.timer.time = state),
-                () => (stateManager.timer.time = 0)
+                (state) => stateManager.timer.set(state),
+                () => stateManager.timer.set(0)
             ),
             new Savestate(
                 "hintCount",
