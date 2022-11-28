@@ -1,6 +1,6 @@
 // import { ref } from "vue";
 import { reactive } from "vue";
-import Board, { Column, Square, StructureDefinitions } from "./sudoku/board";
+import Board, { Column, Row, Square, StructureDefinitions } from "./sudoku/board";
 
 export class Position {
     /** @type {Number} */
