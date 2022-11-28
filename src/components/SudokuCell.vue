@@ -1,14 +1,7 @@
 <template>
-    <div
-        class="cell"
-        :class="{ static: cell.isStatic, selected: isSelected, 'square-highlight': !isSelected && isSquareHighlighted, 'cross-highlight': !isSelected && isCrossHighlighted, error: settings.showErrors && isError }"
-        @click="
-            () => {
-                if (!isSelected) $emit('select', x, y);
-            }
-        "
-    >
-        <template v-if="cell.value !== 0">
+    <div class="cell" :class="classObject" @click="onClick">
+        <template v-if="cell.hasValue()">
+            <div id="circle"></div>
             <template v-if="cell.isStatic">
                 {{ cell.value }}
             </template>
@@ -47,11 +40,19 @@ export default defineComponent({
             type: Boolean,
             default: false,
         },
-        isSquareHighlighted: {
+        isSquareSelected: {
             type: Boolean,
             default: false,
         },
-        isCrossHighlighted: {
+        isRowSelected: {
+            type: Boolean,
+            default: false,
+        },
+        isColumnSelected: {
+            type: Boolean,
+            default: false,
+        },
+        isValueSelected: {
             type: Boolean,
             default: false,
         },
@@ -62,11 +63,29 @@ export default defineComponent({
     },
     setup() {
         const settings = useSettingsStore();
+
         return {
             settings,
         };
     },
+    methods: {
+        onClick() {
+            if (this.isSelected) return;
+            this.$emit("select");
+        },
+    },
     computed: {
+        classObject() {
+            return {
+                static: this.cell.isStatic,
+                selected: this.isSelected,
+                "row-selected": this.isRowSelected,
+                "column-selected": this.isColumnSelected,
+                "square-selected": this.isSquareSelected,
+                "value-selected": this.isValueSelected,
+                error: this.settings.showErrors && true, //this.isError,
+            };
+        },
         boardSize() {
             return StructureDefinitions.SIZE;
         },
@@ -94,12 +113,17 @@ export default defineComponent({
 }
 
 .cell {
+    --area-selected: #ddd;
+    --overlap-selected: #bbb;
+    --cell-selected: #999;
+}
+
+.cell {
     position: relative;
 
     height: 2.1em;
     width: 2.1em;
     font-size: v-bind(size);
-    font-weight: v-bind(weight);
 
     display: flex;
     justify-content: center;
@@ -109,13 +133,12 @@ export default defineComponent({
     cursor: pointer;
     border: 0.1em solid transparent;
 
-    -webkit-touch-callout: none; /* iOS Safari */
-    -webkit-user-select: none; /* Safari */
-    -khtml-user-select: none; /* Konqueror HTML */
-    -moz-user-select: none; /* Old versions of Firefox */
-    -ms-user-select: none; /* Internet Explorer/Edge */
-    user-select: none; /* Non-prefixed version, currently
-                                  supported by Chrome, Edge, Opera and Firefox */
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 .cell:not(.static) > span {
@@ -128,6 +151,17 @@ export default defineComponent({
 .cell.static {
     font-weight: 750;
     font-family: unset;
+}
+.value-selected:not(.selected) > #circle {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border: 1px solid black;
+    border-radius: 100%;
+    margin: 0.1em;
+    opacity: 0.3;
 }
 
 .error > span {
@@ -153,15 +187,17 @@ export default defineComponent({
 }
 
 .selected {
-    background-color: #999;
+    background-color: var(--cell-selected) !important;
 }
 
-.square-highlight,
-.cross-highlight {
-    background-color: #ddd;
+.square-selected,
+.row-selected,
+.column-selected {
+    background-color: var(--area-selected);
 }
 
-.square-highlight.cross-highlight {
-    background-color: #bbb;
+.square-selected.row-selected,
+.square-selected.column-selected {
+    background-color: var(--overlap-selected);
 }
 </style>

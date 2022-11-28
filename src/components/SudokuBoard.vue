@@ -8,9 +8,11 @@
                     :key="cell.id"
                     :puzzle="puzzle"
                     :cell="cell"
+                    :isRowSelected="selectedCell?.row.index === cell.row.index"
+                    :isColumnSelected="selectedCell?.column.index === cell.column.index"
+                    :isSquareSelected="selectedCell?.square.index === cell.square.index"
                     :isSelected="selectedCellId === cell.id"
-                    :isSquareHighlighted="cell.square.index === selectedCell?.square.index"
-                    :isCrossHighlighted="cell.row.index === selectedCell?.row.index || cell.column.index === selectedCell?.column.index"
+                    :isValueSelected="selectedCell?.hasValue() && selectedCell?.value === cell.value"
                     @select="() => onSelectCell(cell.id)"
                     :size="size"
                 />
