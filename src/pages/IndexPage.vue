@@ -5,7 +5,7 @@
         </div>
         <div id="bottom-bar" class="flex column full-width">
             <div id="info-bar" class="flex row full-width q-px-sm">
-                <div>{{ gameState.timer.time }}</div>
+                <div v-show="settings.showTime">{{ puzzleTime }}</div>
                 <q-space />
                 <div class="text-caption q-mr-sm flex flex-center"><q-icon v-for="x in gameState.puzzle.difficultyLevel ?? 0 + 1" :key="x" name="star" color="yellow" /></div>
                 <div class="text-caption flex-center">Hints {{ gameState.hintCount }}</div>
@@ -64,6 +64,8 @@ export default defineComponent({
         this.gameState.eventBus.on("error", (event) => {
             this.showError(event.message);
         });
+
+        this.gameState.timer.start();
     },
     data() {
         return {
