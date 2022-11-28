@@ -7,9 +7,10 @@
             </q-card-section>
             <q-card-section class="text-h6"> Niveau </q-card-section>
             <q-card-section class="q-gutter-y-md">
-                <q-btn v-for="difficulty in Difficulty" :key="difficulty.level" color="primary" outline size="lg" align="left" :label="difficulty.name" class="full-width" @click="() => onOKClick(difficulty)"
-                    ><q-space /><q-icon v-for="x in difficulty.level + 1" :key="x" name="star" color="yellow"
-                /></q-btn>
+                <q-btn v-for="difficulty in Difficulty" :key="difficulty.level" color="primary" outline size="lg" align="left" :label="difficulty.name" class="full-width" @click="() => onOKClick(difficulty)">
+                    <q-space />
+                    <difficulty-rating :level="difficulty.level" />
+                </q-btn>
             </q-card-section>
             <q-card-section>
                 <q-btn label="Cancel" class="full-width" color="negative" @click="onCancelClick" />
@@ -21,6 +22,7 @@
 <script>
 import { ref } from "vue";
 import Difficulty from "src/data/difficulty.json";
+import DifficultyRating from "./DifficultyRating.vue";
 
 /**
  * @param {Object} value
@@ -33,6 +35,7 @@ function parseDef(value, def) {
 }
 
 export default {
+    components: { DifficultyRating },
     name: "NewLevelDialog",
     props: {},
     emits: ["ok", "hide"],

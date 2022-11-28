@@ -4,7 +4,7 @@
             <q-card-section class="text-h2"> You Won! </q-card-section>
             <q-card-section class="q-gutter-y-md text-h6">
                 <div class="text-h6 row items-center">
-                    Difficulty: <span class="q-ml-sm"><q-icon v-for="x in puzzle.difficultyLevel + 1" :key="x" name="star" color="yellow" /></span>
+                    Difficulty: <span class="q-ml-sm"><difficulty-rating :level="puzzle.difficultyLevel" /></span>
                 </div>
                 <div class="text-h6 row items-center">
                     Hints: <span class="q-ml-sm">{{ hintCount }}</span>
@@ -26,8 +26,11 @@
 <script>
 import PuzzleBoard from "src/lib/reactiveSoduku";
 import NewLevelDialog from "./NewLevelDialog.vue";
+import DifficultyRating from "./DifficultyRating.vue";
+
 export default {
     name: "VictoryScreen",
+    components: { DifficultyRating },
     props: {
         puzzle: {
             type: PuzzleBoard,

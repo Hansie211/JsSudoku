@@ -4,10 +4,10 @@
             <q-card-section class="text-h4"> Victories </q-card-section>
             <q-card-section class="q-my-md text-h6">
                 <template v-if="victories.length">
-                    <q-markup-table separator="horizontal" flat bordered class="text-subtitle2">
+                    <q-markup-table style="max-height: 60vh" separator="horizontal" flat bordered class="text-subtitle2">
                         <tbody>
                             <tr v-for="(result, idx) in victories" :key="idx">
-                                <td class="text-center"><q-icon v-for="x in result.difficultyLevel + 1" :key="x" name="star" color="yellow" /></td>
+                                <td class="text-center"><difficulty-rating :level="result.difficultyLevel" /></td>
                                 <td class="text-left">#{{ result.level }}</td>
                                 <td class="row items-center text-left"><q-icon name="o_lightbulb" outline /> {{ result.hintCount }}</td>
                                 <td class="text-left">{{ this.displayTime(result.time) }}</td>
@@ -25,7 +25,9 @@
 </template>
 
 <script>
+import DifficultyRating from "./DifficultyRating.vue";
 export default {
+    components: { DifficultyRating },
     name: "VictoryHistoryScreen",
     props: {
         victories: {

@@ -7,7 +7,7 @@
             <div id="info-bar" class="flex row full-width q-px-sm">
                 <div v-show="settings.showTime">{{ puzzleTime }}</div>
                 <q-space />
-                <div class="text-caption q-mr-sm flex flex-center"><q-icon v-for="x in gameState.puzzle.difficultyLevel ?? 0 + 1" :key="x" name="star" color="yellow" /></div>
+                <div class="text-caption q-mr-sm flex flex-center"><difficulty-rating :level="gameState.puzzle?.difficultyLevel || 0" /></div>
                 <div class="text-caption flex-center">Hints {{ gameState.hintCount }}</div>
             </div>
             <div id="action-bar" class="full-width">
@@ -36,9 +36,10 @@ import { useSettingsStore } from "src/stores/settings-store";
 import NumberBar from "src/components/NumberBar";
 import VictoryScreen from "src/components/VictoryScreen";
 import GameStateManager from "src/lib/GameStateManager";
+import DifficultyRating from "src/components/DifficultyRating.vue";
 
 export default defineComponent({
-    components: { SudokuBoard, NumberBar },
+    components: { SudokuBoard, NumberBar, DifficultyRating },
     name: "IndexPage",
     setup() {
         const settings = useSettingsStore();
