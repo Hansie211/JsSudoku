@@ -144,7 +144,7 @@ export default defineComponent({
             this.$q.dialog({
                 component: VictoryHistoryScreen,
                 componentProps: {
-                    victories: this.$q.localStorage.getItem("victories")?.data ?? [],
+                    victories: (this.$q.localStorage.getItem("victories")?.data ?? []).reverse(),
                 },
             });
         },
