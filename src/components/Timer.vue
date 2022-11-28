@@ -46,7 +46,6 @@ export default defineComponent({
                 } else {
                     window.clearInterval(timer.value);
                 }
-                console.debug(val ? "App became visible" : "App went in the background");
             },
             { immediate: true }
         );
