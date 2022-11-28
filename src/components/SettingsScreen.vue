@@ -1,5 +1,5 @@
 <template>
-    <q-dialog v-model="show">
+    <q-dialog ref="dialog">
         <q-card style="width: 80vw">
             <q-card-section>
                 <q-list style="font-size: 1.2em">
@@ -13,10 +13,10 @@
                 </q-list>
             </q-card-section>
             <q-card-section class="q-gutter-y-md">
-                <div class="text-subtitle2">Current level: {{ puzzle.seed }}</div>
+                <div class="text-subtitle2">Current level: {{ currentLevel }}</div>
                 <q-btn label="Clear data" flat color="negative" class="full-width" @click="clearCache" />
-                <q-btn label="Retry level" flat color="negative" class="full-width" @click="resetGame" />
-                <q-btn label="New level" flat color="primary" class="full-width" @click="newGame" />
+                <q-btn label="Retry level" flat color="negative" class="full-width" @click="onResetGame" />
+                <q-btn label="New level" flat color="primary" class="full-width" @click="onNewGame" />
                 <q-btn label="History" flat color="primary" class="full-width" @click="showHistory" />
             </q-card-section>
 
@@ -29,25 +29,19 @@
     </q-dialog>
 </template>
 <script>
-import PuzzleBoard from "src/lib/reactiveSoduku";
 import { useSettingsStore } from "src/stores/settings-store";
 import { computed, defineComponent } from "vue";
 import NewLevelDialog from "./NewLevelDialog";
 import VictoryHistoryScreen from "./VictoryHistoryScreen.vue";
 
 export default defineComponent({
-    name: "SettingsDialog",
+    name: "SettingsScreen",
     props: {
-        modelValue: {
-            type: Boolean,
-            required: true,
-        },
-        puzzle: {
-            type: PuzzleBoard,
+        currentLevel: {
+            type: Number,
             required: true,
         },
     },
-    emits: ["update:modelValue", "resetGame", "newLevel"],
     setup() {
         const settings = useSettingsStore();
 
@@ -83,54 +77,68 @@ export default defineComponent({
             settingsToggles,
         };
     },
+    emits: ["ok", "hide"],
     methods: {
-        resetGame() {
-            this.$q
-                .dialog({
-                    title: "Warning",
-                    message: "Are you sure? You cannot reverse this action.",
-                    cancel: true,
-                    persistent: true,
-                    ok: {
-                        label: "Continue",
-                        color: "negative",
-                    },
-                })
-                .onOk(() => {
-                    this.$emit("resetGame");
-                    this.show = false;
-                });
+        show() {
+            this.$refs.dialog.show();
         },
-        clearCache() {
-            this.$q
-                .dialog({
-                    title: "Warning",
-                    message: "Are you sure? This will remove your current save game and the victory history. You cannot reverse this action.",
-                    cancel: true,
-                    persistent: true,
-                    ok: {
-                        label: "Continue",
-                        color: "negative",
-                    },
-                })
-                .onOk(() => {
-                    this.$q.localStorage.clear();
-                    location.reload();
-                });
+        hide() {
+            this.$refs.dialog.hide();
         },
-        newGame() {
-            this.$q
-                .dialog({
-                    component: NewLevelDialog,
-                    componentProps: {
-                        text: "something",
-                        // ...more..props...
+        onDialogHide() {
+            this.$emit("hide");
+        },
+
+        onDialogCancel() {
+            this.hide();
+        },
+        onDialogOK(action) {
+            this.$emit("ok", action);
+            this.hide();
+        },
+
+        confirm(message) {
+            return new Promise((resolve, reject) => {
+                this.$q
+                    .dialog({
+                        title: "Warning",
+                        message: message,
+                        cancel: true,
+                        persistent: true,
+                        ok: {
+                            label: "Continue",
+                            color: "negative",
+                        },
+                    })
+                    .onOk(() => resolve(true))
+                    .onCancel(() => reject(false));
+            });
+        },
+
+        async onResetGame() {
+            const confirm = await this.confirm("Are you sure? You cannot reverse this action.");
+            if (!confirm) return;
+
+            this.onDialogOK({ name: "reset-level", data: {} });
+        },
+
+        async clearCache() {
+            const confirm = await this.confirm("Are you sure? This will remove your current save game and the victory history. You cannot reverse this action.");
+            if (!confirm) return;
+
+            this.$q.localStorage.clear();
+            location.reload();
+        },
+        onNewGame() {
+            this.$q.dialog({ component: NewLevelDialog }).onOk((levelInfo) => {
+                this.onDialogOK({
+                    name: "new-level",
+                    data: {
+                        seed: levelInfo.seed,
+                        level: levelInfo.level,
                     },
-                })
-                .onOk((levelInfo) => {
-                    this.$emit("newLevel", levelInfo);
-                    this.show = false;
                 });
+            });
         },
         showHistory() {
             this.$q.dialog({
@@ -139,16 +147,6 @@ export default defineComponent({
                     victories: this.$q.localStorage.getItem("victories")?.data ?? [],
                 },
             });
-        },
-    },
-    computed: {
-        show: {
-            get() {
-                return this.modelValue;
-            },
-            set(newValue) {
-                this.$emit("update:modelValue", newValue);
-            },
         },
     },
 });
