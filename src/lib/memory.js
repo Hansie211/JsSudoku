@@ -1,36 +1,3 @@
-// export class MemoryItem {
-//     /** @type {Number} */
-//     #cellId;
-//     /** @type {Object} */
-//     #value;
-//     /** @type {Number} */
-//     #mode;
-
-//     /** @returns {Number} */
-//     get cellId() {
-//         return this.#cellId;
-//     }
-//     /** @returns {Object} */
-//     get value() {
-//         return this.#value;
-//     }
-//     /** @returns {Number} */
-//     get mode() {
-//         return this.#mode;
-//     }
-
-//     /**
-//      * @param {Number} cellId
-//      * @param {Object} value
-//      * @param {Number} mode
-//      */
-//     constructor(cellId, value, mode) {
-//         this.#cellId = cellId;
-//         this.#value = value;
-//         this.#mode = mode;
-//     }
-// }
-
 export default class Memory {
     /** @type {Array<Array<State>>} */
     data;
@@ -44,11 +11,12 @@ export default class Memory {
     }
 
     /**
+     * @param {Memory} result
      * @param {Object} data
      * @returns {Memory}
      */
-    static deserialize(data) {
-        const result = new Memory();
+    static deserialize(result, data) {
+        result.clear();
 
         data.forEach((item) => {
             const state = JSON.parse(item);
@@ -79,6 +47,7 @@ export default class Memory {
      */
     store(states) {
         if (!Array.isArray(states)) states = [states];
+        if (states.length === 0) return;
 
         const clonedStates = states.map(Memory.#deepClone);
         this.data.push(clonedStates);
