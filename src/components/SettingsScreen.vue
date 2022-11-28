@@ -48,7 +48,7 @@ export default defineComponent({
         const settingsToggles = [
             {
                 name: "Timer",
-                icon: "timer",
+                icon: "o_timer",
                 prop: computed({
                     get: () => settings.showTime,
                     set: (v) => (settings.showTime = v),
@@ -56,7 +56,7 @@ export default defineComponent({
             },
             {
                 name: "Highlight errors",
-                icon: "error",
+                icon: "o_fact_check",
                 prop: computed({
                     get: () => settings.showErrors,
                     set: (v) => (settings.showErrors = v),
@@ -64,7 +64,7 @@ export default defineComponent({
             },
             {
                 name: "Allow hints",
-                icon: "lightbulb",
+                icon: "o_tips_and_updates",
                 prop: computed({
                     get: () => settings.showHints,
                     set: (v) => (settings.showHints = v),
