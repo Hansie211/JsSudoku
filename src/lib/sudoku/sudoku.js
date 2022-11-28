@@ -200,7 +200,7 @@ export class Solver {
         const notebook = cloneInput && inputNotebook ? inputNotebook.clone(board) : Notebook.fromBoard(board);
 
         try {
-            this.#fillSingleOptions(notebook, rng);
+            while (this.#fillSingleOptions(notebook, rng));
         } catch (error) {
             if (error instanceof SolutionError) {
                 console.debug(error.message);
