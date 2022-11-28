@@ -47,7 +47,7 @@ export default defineComponent({
 
         const settingsToggles = [
             {
-                name: "Timer",
+                name: "Display time",
                 icon: "o_timer",
                 prop: computed({
                     get: () => settings.showTime,
