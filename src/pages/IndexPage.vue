@@ -181,7 +181,7 @@ export default defineComponent({
         createState(cellId, value, isNote, isHint) {
             return {
                 cellId,
-                value: JSON.stringify(value),
+                value,
                 isNote: isNote === true,
                 isHint: isHint === true,
             };
@@ -307,7 +307,7 @@ export default defineComponent({
 
             states.forEach((state) => {
                 const cell = this.puzzle.findCellById(state.cellId);
-                const value = JSON.parse(state.value);
+                const value = state.value;
                 switch (state.isNote) {
                     case false: {
                         cell.value = value;

@@ -58,6 +58,10 @@ export default class Memory {
         return result;
     }
 
+    static #deepClone(obj) {
+        return JSON.parse(JSON.stringify(obj));
+    }
+
     clear() {
         this.data.length = 0;
     }
@@ -75,7 +79,9 @@ export default class Memory {
      */
     store(states) {
         if (!Array.isArray(states)) states = [states];
-        this.data.push(states);
+
+        const clonedStates = states.map(Memory.#deepClone);
+        this.data.push(clonedStates);
     }
 
     /** @returns {Number} */
