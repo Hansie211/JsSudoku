@@ -53,10 +53,9 @@ export default {
             this.$emit("hide");
         },
 
-        onOKClick(level) {
-            if (this.levelNumber === "") this.levelNumber = Math.floor(Math.random() * 4294967296);
-            this.$emit("ok", { level, seed: this.levelNumber });
+        onOKClick(difficulty) {
             const seed = parseDef(this.levelNumber, Math.floor(Math.random() * 4294967296));
+            this.$emit("ok", { difficultyLevel: difficulty.level, seed });
             this.hide();
         },
 

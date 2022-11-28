@@ -135,7 +135,7 @@ export default defineComponent({
                     name: "new-level",
                     data: {
                         seed: levelInfo.seed,
-                        level: levelInfo.level,
+                        difficultyLevel: levelInfo.difficultyLevel,
                     },
                 });
             });

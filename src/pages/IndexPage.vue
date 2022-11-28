@@ -101,7 +101,7 @@ export default defineComponent({
                         hintCount: this.gameState.hintCount,
                     },
                 })
-                .onOk((info) => this.gameState.newLevel(info.level, info.seed));
+                .onOk((info) => this.gameState.newLevel(info.difficultyLevel, info.seed));
         },
         showSettings() {
             this.$q
