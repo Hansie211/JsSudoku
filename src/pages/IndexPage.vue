@@ -115,7 +115,7 @@ export default defineComponent({
                 .onOk((action) => {
                     switch (action.name) {
                         case "new-level":
-                            this.gameState.newLevel(action.data.level, action.data.seed);
+                            this.gameState.newLevel(action.data.difficultyLevel, action.data.seed);
                             break;
                         case "reset-level":
                             this.gameState.resetLevel();
