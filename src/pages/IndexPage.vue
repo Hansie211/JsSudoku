@@ -15,7 +15,7 @@
                     <q-btn icon="settings" round flat size="md" @click="showSettings" />
                     <q-space />
                     <q-btn icon="undo" flat round size="md" @click="undo" />
-                    <q-btn icon="lightbulb" flat round size="md" @click="hint" v-show="settings.showHints" />
+                    <q-btn icon="tips_and_updates" flat round size="md" @click="hint" v-show="settings.showHints" />
                     <q-toggle v-model="noteMode" icon="edit" color="positive" />
                     <q-btn icon="backspace" flat round size="md" @click="clearCell" />
                 </div>
