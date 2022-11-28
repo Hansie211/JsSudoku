@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { ref, watch } from "vue";
 import versions from "src/data/version.json";
-import { SaveManager, Savestate } from "src/lib/savegame";
+import SaveManager, { Savestate } from "src/lib/SaveManager";
 
 export const useSettingsStore = defineStore("settings", () => {
     const settings = {
@@ -11,14 +11,13 @@ export const useSettingsStore = defineStore("settings", () => {
     };
 
     const saveManager = new SaveManager();
-
     Object.keys(settings).forEach((key) => {
         saveManager.states.push(
             new Savestate(
                 key,
                 () => settings[key].value,
                 (v) => (settings[key].value = v),
-                () => true
+                () => (settings[key].value = true)
             )
         );
     });
