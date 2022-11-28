@@ -3,19 +3,6 @@ import IdSupplier from "./idSupplier";
 import Notebook from "./notebook";
 import { RNG, shuffleList } from "./RNG";
 
-export function DEMO() {
-    const rng = new RNG();
-    const board = Board.randomSkeleton(rng);
-
-    console.time("solve");
-    const solver = new Solver();
-
-    const solutions = solver.getSolutions(board, 3);
-    solutions.forEach((x) => x.print());
-    console.log("Done(?)");
-    console.timeEnd("solve");
-}
-
 /**
  * @param {Number} emptySquares
  * @param {Number} seed
