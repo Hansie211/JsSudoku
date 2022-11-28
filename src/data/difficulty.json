@@ -1,0 +1,26 @@
+[
+    {
+        "name": "Easy",
+        "cells": 16,
+        "level": 0,
+        "logic": true
+    },
+    {
+        "name": "Medium",
+        "cells": 32,
+        "level": 1,
+        "logic": true
+    },
+    {
+        "name": "Hard",
+        "cells": 48,
+        "level": 2,
+        "logic": true
+    },
+    {
+        "name": "Extra Hard",
+        "cells": 64,
+        "level": 3,
+        "logic": true
+    }
+]
