@@ -23,8 +23,6 @@
                 <number-bar :size="9" @click="placeNumber" :activeNumbers="activeNumbers" />
             </div>
         </div>
-        {{ demo.deep.value }}
-        <!-- <settings-dialog v-model="showSettings" :puzzle="gameState.puzzle" @resetGame="resetGame" @newLevel="newLevel" /> -->
     </q-page>
 </template>
 
@@ -51,7 +49,6 @@ export default defineComponent({
             /** @type {GameStateManager} */
             gameState,
             renderKey: ref(0),
-            demo,
         };
     },
     created() {
@@ -127,8 +124,6 @@ export default defineComponent({
         },
 
         placeNumber(num) {
-            this.demo.deep.value++;
-
             if (this.noteMode) this.gameState.placeNote(this.selectedCellId, num);
             else this.gameState.placeNum(this.selectedCellId, num);
         },
@@ -160,9 +155,6 @@ export default defineComponent({
             if (this.selectedCell.value) return [];
 
             return this.selectedCell.notes.values;
-        },
-        gameTime() {
-            return toRef(this.gameState, "timer");
         },
         puzzleTime() {
             const time = this.gameState.timer.time;
