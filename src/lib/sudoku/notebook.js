@@ -123,8 +123,5 @@ export default class Notebook {
         this.id = IdSupplier.getId();
         this.cellnotes = [];
         this.board = board;
-
-        this.setup = this.setup.bind(this);
-        this.clone = this.clone.bind(this);
     }
 }

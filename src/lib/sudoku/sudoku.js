@@ -1,4 +1,4 @@
-import Board, { BoardStructure, StructureDefinitions } from "./board";
+import Board, { StructureDefinitions } from "./board";
 import IdSupplier from "./idSupplier";
 import Notebook from "./notebook";
 import { RNG, shuffleList } from "./RNG";

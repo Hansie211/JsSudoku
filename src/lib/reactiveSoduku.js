@@ -82,13 +82,6 @@ export class Notes {
 
     constructor() {
         this.values = reactive([]);
-
-        this.hasValue = this.hasValue.bind(this);
-        this.addValue = this.addValue.bind(this);
-        this.removeValue = this.removeValue.bind(this);
-        this.swapValue = this.swapValue.bind(this);
-        this.clear = this.clear.bind(this);
-        this.set = this.set.bind(this);
     }
 }
 
@@ -175,8 +168,6 @@ export class Cell {
 
         this._isStatic = this.hasValue();
 
-        this.hasValue = this.hasValue.bind(this);
-
         Cell.#setPositions(this);
     }
 }
@@ -218,10 +209,11 @@ export default class PuzzleBoard {
      * @param {Object} obj
      * @returns {PuzzleBoard}
      */
-    static deserialize(obj) {
-        if (obj === null) return null;
-        // try {
-        const result = new PuzzleBoard();
+    static deserialize(result, obj) {
+        if (obj === null) throw new Error();
+
+        result.cells.length = 0;
+        result.solution.length = 0;
 
         result.cells = obj.cells.map((info) => {
             const pos = new Position(info.x, info.y);
@@ -237,11 +229,6 @@ export default class PuzzleBoard {
         result.difficultyLevel = obj.difficultyLevel;
 
         return result;
-        // } catch (error) {
-        //     console.debug(obj);
-        //     console.warn("Cannot deserialize", error);
-        //     return null;
-        // }
     }
 
     /**
@@ -284,10 +271,11 @@ export default class PuzzleBoard {
      * @param {Board} solution
      * @param {Number} seed
      */
-    static fromBoard(board, solution, seed) {
-        const result = new PuzzleBoard();
-
+    static fromBoard(result, board, solution, seed) {
+        result.cells.length = 0;
+        result.solution.length = 0;
         result.seed = seed;
+
         for (var x = 0; x < StructureDefinitions.SIZE; x++) {
             for (var y = 0; y < StructureDefinitions.SIZE; y++) {
                 const solutionValue = solution.getCell(x, y);

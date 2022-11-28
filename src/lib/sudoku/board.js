@@ -74,7 +74,6 @@ export class BoardStructure {
     constructor(index) {
         this.id = IdSupplier.getId();
         this.index = index;
-        this.get = this.get.bind(this);
     }
 }
 
@@ -315,15 +314,5 @@ export default class Board {
     constructor() {
         this.id = IdSupplier.getId();
         this.cells = new List(StructureDefinitions.CELL_COUNT);
-
-        this.getCell = this.getCell.bind(this);
-        this.setCell = this.setCell.bind(this);
-
-        this.clone = this.clone.bind(this);
-        this.duplicate = this.duplicate.bind(this);
-        this.import = this.import.bind(this);
-
-        this.isFinished = this.isFinished.bind(this);
-        this.isValid = this.isValid.bind(this);
     }
 }

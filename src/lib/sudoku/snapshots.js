@@ -50,9 +50,5 @@ export default class List {
         this.parent = null;
         this.data = [];
         this.size = size;
-
-        this.get = this.get.bind(this);
-        this.set = this.set.bind(this);
-        this.clone = this.clone.bind(this);
     }
 }
