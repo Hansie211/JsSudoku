@@ -21,6 +21,17 @@
 <script>
 import { ref } from "vue";
 import Difficulty from "src/data/difficulty.json";
+
+/**
+ * @param {Object} value
+ * @param {Number} def
+ * @returns {Number}
+ */
+function parseDef(value, def) {
+    const result = parseInt(value);
+    return isNaN(result) ? def : result;
+}
+
 export default {
     name: "NewLevelDialog",
     props: {},
@@ -45,6 +56,7 @@ export default {
         onOKClick(level) {
             if (this.levelNumber === "") this.levelNumber = Math.floor(Math.random() * 4294967296);
             this.$emit("ok", { level, seed: this.levelNumber });
+            const seed = parseDef(this.levelNumber, Math.floor(Math.random() * 4294967296));
             this.hide();
         },
 
