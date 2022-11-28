@@ -7,7 +7,7 @@
                     <q-item class="text-body1" clickable v-ripple v-for="setting in settingsToggles" :key="setting.name" @click="() => (setting.prop.value = !setting.prop.value)">
                         <q-item-section> {{ setting.name }} </q-item-section>
                         <q-item-section side>
-                            <q-toggle v-model="setting.prop.value" :icon="setting.icon" />
+                            <q-toggle keep-color color="primary" size="lg" v-model="setting.prop.value" :icon="setting.icon" />
                         </q-item-section>
                     </q-item>
                 </q-list>
