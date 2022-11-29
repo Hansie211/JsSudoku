@@ -90,6 +90,14 @@ export class Column extends BoardStructure {
 
         return [x, y];
     }
+
+    /**
+     * @param {Number} index
+     */
+    constructor(index) {
+        super(index);
+        this.get = this.get.bind(this);
+    }
 }
 
 export class Row extends BoardStructure {
@@ -103,6 +111,14 @@ export class Row extends BoardStructure {
         const y = this.index;
 
         return [x, y];
+    }
+
+    /**
+     * @param {Number} index
+     */
+    constructor(index) {
+        super(index);
+        this.get = this.get.bind(this);
     }
 }
 
@@ -135,6 +151,8 @@ export class Square extends BoardStructure {
 
         this.#squareX = (this.index % StructureDefinitions.BASE_NUMBER) * StructureDefinitions.BASE_NUMBER;
         this.#squareY = Math.floor(this.index / StructureDefinitions.BASE_NUMBER) * StructureDefinitions.BASE_NUMBER;
+
+        this.get = this.get.bind(this);
     }
 }
 
