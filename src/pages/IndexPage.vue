@@ -29,9 +29,9 @@
 <script>
 import SudokuBoard from "src/components/SudokuBoard.vue";
 import SettingsScreen from "src/components/SettingsScreen";
-import { BoardStructure, StructureDefinitions } from "src/lib/sudoku/board";
-import { defineComponent, reactive, ref, toRef } from "vue";
-import PuzzleBoard, { Cell } from "src/lib/reactiveSoduku";
+import { StructureDefinitions } from "src/lib/sudoku/board";
+import { defineComponent, reactive, ref } from "vue";
+import { Cell } from "src/lib/reactiveSoduku";
 import { useSettingsStore } from "src/stores/settings-store";
 import NumberBar from "src/components/NumberBar";
 import VictoryScreen from "src/components/VictoryScreen";
