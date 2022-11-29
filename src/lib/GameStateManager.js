@@ -5,6 +5,7 @@ import SaveManager, { Savestate } from "./SaveManager";
 import Timer from "./Timer";
 import Difficulty from "src/data/difficulty.json";
 import { getPuzzle } from "./sudoku/sudoku";
+import DefaultPuzzle from "src/data/default-puzzle.json";
 
 export default class GameStateManager {
     /** @type {PuzzleBoard} */
@@ -36,9 +37,7 @@ export default class GameStateManager {
                 () => PuzzleBoard.serialize(stateManager.puzzle),
                 (state) => PuzzleBoard.deserialize(stateManager.puzzle, state),
                 () => {
-                    const [solution, board, seed] = getPuzzle(20);
-                    PuzzleBoard.fromBoard(stateManager.puzzle, board, solution, seed);
-                    stateManager.puzzle.difficultyLevel = 0;
+                    PuzzleBoard.deserialize(stateManager.puzzle, DefaultPuzzle);
                 }
             ),
             new Savestate(
