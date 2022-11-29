@@ -4,7 +4,30 @@ import Notebook from "./notebook";
 import { RNG, shuffleList } from "./RNG";
 
 /**
+ * @template T
+ * @param {() => T} fn
+ * @returns {Promise<T>}
  */
+function doNextTick(fn) {
+    return new Promise((resolve) => setTimeout(() => resolve(fn()), 0));
+}
+
+class TimeoutManager {
+    #timeouts = 0;
+
+    /**
+     * @template T
+     * @param {() => T} fn
+     * @returns {Promise<T>}
+     */
+    async getResult(fn) {
+        this.#timeouts++;
+        if (this.#timeouts > 50) {
+            this.#timeouts = 0;
+
+            return doNextTick(fn);
+        } else return new Promise((resolve) => resolve(fn()));
+    }
 }
 
 /**
@@ -16,10 +39,17 @@ function getFirstItem(array) {
     return array.find((x) => x !== undefined);
 }
 
+// https://www.technologyreview.com/2012/01/06/188520/mathematicians-solve-minimum-sudoku-problem/
+export const MINIMAL_SQUARE_COUNT = 17;
+
+/**
  * @param {Number} emptyCells
  * @param {Number} seed
- * @returns {Array<Board>}
+ * @param {Boolean} doNotGuess
+ * @returns {Promise<Array<Board>>}
  */
+export async function getPuzzle(emptyCells, seed, doNotGuess) {
+    doNotGuess = doNotGuess === true;
     const rng = new RNG(seed);
 
     const skeleton = Board.randomSkeleton(rng);
@@ -37,13 +67,13 @@ function getFirstItem(array) {
     var cellsCleared = 0;
     const puzzleBoard = board.duplicate();
 
-    for (var i = 0; i < allPositions.length; i++) {
+    for (var i = 0; i < allPositions.length && cellsCleared + MINIMAL_SQUARE_COUNT < StructureDefinitions.CELL_COUNT; i++) {
         const [x, y] = allPositions[i];
 
         const value = puzzleBoard.getCell(x, y);
         puzzleBoard.setCell(x, y, 0);
 
-        const solutions = solver.getSolutions(puzzleBoard, 2, rng, true);
+        const solutions = await solver.getSolutions(puzzleBoard, 2, rng, doNotGuess);
         if (solutions.length !== 1) {
             puzzleBoard.setCell(x, y, value); // core number
         } else {
@@ -183,14 +213,16 @@ export class Solver {
      * @param {Notebook} inputNotebook
      * @param {Boolean} cloneInput
      * @param {Number} foundCount
-     * @returns {Array<Board>}
+     * @param {TimeoutManager} timeoutManager
+     * @returns {Promise<Array<Board>>}
      */
-    getSolutions(inputBoard, maxCount, rng, doNotGuess, inputNotebook, cloneInput, foundCount) {
+    async getSolutions(inputBoard, maxCount, rng, doNotGuess, inputNotebook, cloneInput, foundCount, timeoutManager) {
         cloneInput = cloneInput !== false;
         maxCount = maxCount ? maxCount : 1;
         rng = rng ?? new RNG();
         doNotGuess = doNotGuess === true;
         foundCount = foundCount ?? 0;
+        timeoutManager = timeoutManager || new TimeoutManager();
 
         const board = cloneInput ? inputBoard.clone() : inputBoard;
         const notebook = cloneInput && inputNotebook ? inputNotebook.clone(board) : Notebook.fromBoard(board);
@@ -223,7 +255,10 @@ export class Solver {
 
             this.#cascadeFill(cloneBook, x, y, option);
 
-            const newSolutions = this.getSolutions(cloneBoard, maxCount, rng, doNotGuess, cloneBook, false, foundCount + foundSolutions.length);
+            const newSolutions = await timeoutManager.getResult(() => {
+                return this.getSolutions(cloneBoard, maxCount, rng, doNotGuess, cloneBook, false, foundCount + foundSolutions.length, timeoutManager);
+            });
+
             foundSolutions = foundSolutions.concat(newSolutions);
 
             if (foundSolutions.length + foundCount >= maxCount) return foundSolutions;

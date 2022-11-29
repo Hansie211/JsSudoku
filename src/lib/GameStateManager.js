@@ -247,18 +247,12 @@ export default class GameStateManager {
     async newLevel(difficultyLevel, seed) {
         const difficulty = Difficulty.find((item) => item.level === difficultyLevel) ?? Difficulty[0];
 
-        return new Promise((resolve) => {
-            window.setTimeout(() => {
-                const [solution, board, _seed] = getPuzzle(difficulty.cells, seed);
-                PuzzleBoard.fromBoard(this.puzzle, board, solution, _seed);
-                this.puzzle.difficultyLevel = difficultyLevel;
+        const [solution, board, _seed] = await getPuzzle(difficulty.cells, seed);
+        PuzzleBoard.fromBoard(this.puzzle, board, solution, _seed);
+        this.puzzle.difficultyLevel = difficultyLevel;
 
-                this.resetGameState();
-                this.saveManager.save();
-
-                resolve();
-            }, 100);
-        });
+        this.resetGameState();
+        this.saveManager.save();
     }
 
     constructor() {

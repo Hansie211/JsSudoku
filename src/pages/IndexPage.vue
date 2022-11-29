@@ -7,7 +7,7 @@
             <div id="info-bar" class="flex row full-width q-px-sm">
                 <div v-show="settings.showTime">{{ puzzleTime }}</div>
                 <q-space />
-                <div class="text-caption q-mr-sm flex flex-center"><difficulty-rating :level="gameState.puzzle?.difficultyLevel || 0" /></div>
+                <div class="text-caption q-mr-sm flex flex-center"><difficulty-rating :level="gameDifficulty.level" /></div>
                 <div class="text-caption flex-center">Hints {{ gameState.hintCount }}</div>
             </div>
             <div id="action-bar" class="full-width">
@@ -37,6 +37,7 @@ import NumberBar from "src/components/NumberBar";
 import VictoryScreen from "src/components/VictoryScreen";
 import GameStateManager from "src/lib/GameStateManager";
 import DifficultyRating from "src/components/DifficultyRating.vue";
+import Difficulty from "src/data/difficulty.json";
 
 export default defineComponent({
     components: { SudokuBoard, NumberBar, DifficultyRating },
@@ -102,7 +103,16 @@ export default defineComponent({
                         hintCount: this.gameState.hintCount,
                     },
                 })
-                .onOk((info) => this.gameState.newLevel(info.difficultyLevel, info.seed));
+                .onOk(async (info) => {
+                    await this.generateLevel(info.difficultyLevel, info.seed);
+                });
+        },
+        async generateLevel(difficultyLevel, seed) {
+            this.$q.loading.show({ message: "Generating level...", delay: 1 });
+
+            await this.gameState.newLevel(difficultyLevel, seed);
+
+            this.$q.loading.hide();
         },
         showSettings() {
             this.$q
@@ -110,12 +120,13 @@ export default defineComponent({
                     component: SettingsScreen,
                     componentProps: {
                         currentLevel: this.gameState.puzzle.seed,
+                        difficulty: this.gameDifficulty,
                     },
                 })
-                .onOk((action) => {
+                .onOk(async (action) => {
                     switch (action.name) {
                         case "new-level":
-                            this.gameState.newLevel(action.data.difficultyLevel, action.data.seed);
+                            await this.generateLevel(action.data.difficultyLevel, action.data.seed);
                             break;
                         case "reset-level":
                             this.gameState.resetLevel();
@@ -163,6 +174,9 @@ export default defineComponent({
             const m = 0 + Math.floor(time / 60);
 
             return m.toString().padStart(2, "0") + ":" + s.toString().padStart(2, "0");
+        },
+        gameDifficulty() {
+            return Difficulty.find((x) => x.level === this.gameState.puzzle?.difficultyLevel) || Difficulty[0];
         },
     },
 });
