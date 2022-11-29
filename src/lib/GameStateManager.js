@@ -227,6 +227,7 @@ export default class GameStateManager {
         this.timer.paused = false;
 
         this.saveManager.save();
+        this.eventBus.dispatch("start-level", { puzzle: this.puzzle });
     }
 
     resetLevel() {
