@@ -233,27 +233,39 @@ export default class PuzzleBoard {
 
     /**
      * @param {Position} position
+     * @param {Array<Number} xy
+     * @param {Number} x
+     * @param {Number} y
      * @returns {Number}
      */
-    static toIndex(position) {
-        return position.x + position.y * StructureDefinitions.SIZE;
+    static toIndex({ position = undefined, xy = undefined, x = 0, y = 0 } = {}) {
+        const _x = position !== undefined ? position.x : xy !== undefined ? xy[0] : x;
+        const _y = position !== undefined ? position.y : xy !== undefined ? xy[1] : y;
+
+        return _x + _y * StructureDefinitions.SIZE;
     }
 
     /**
      * @param {Position} position
+     * @param {Array<Number} xy
+     * @param {Number} x
+     * @param {Number} y
      * @returns {Cell}
      */
-    getCell(position) {
-        const index = PuzzleBoard.toIndex(position);
+    getCell({ position = undefined, xy = undefined, x = 0, y = 0 } = {}) {
+        const index = PuzzleBoard.toIndex({ position, xy, x, y });
         return this.cells[index];
     }
 
     /**
      * @param {Position} position
+     * @param {Array<Number} xy
+     * @param {Number} x
+     * @param {Number} y
      * @returns {Number}
      */
-    getSolutionValue(position) {
-        const index = PuzzleBoard.toIndex(position);
+    getSolutionValue({ position = undefined, xy = undefined, x = 0, y = 0 } = {}) {
+        const index = PuzzleBoard.toIndex({ position, xy, x, y });
         return this.solution[index];
     }
 
@@ -282,7 +294,7 @@ export default class PuzzleBoard {
                 const boardValue = board.getCell(x, y);
 
                 const position = new Position(x, y);
-                const index = PuzzleBoard.toIndex(position);
+                const index = PuzzleBoard.toIndex({ position });
 
                 result.solution[index] = solutionValue;
 

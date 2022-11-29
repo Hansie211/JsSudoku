@@ -208,7 +208,7 @@ export default class GameStateManager {
         const nextOpenCell = this.puzzle.cells.find((cell) => !cell.hasValue());
         if (!nextOpenCell) return;
 
-        const soltionValue = this.puzzle.solution[PuzzleBoard.toIndex(nextOpenCell.position)];
+        const soltionValue = this.puzzle.solution[PuzzleBoard.toIndex({ position: nextOpenCell.position })];
 
         this.__saveMemoryState(nextOpenCell.id, 0, { isNote: false, isHint: true });
 
