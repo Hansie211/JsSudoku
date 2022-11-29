@@ -1,12 +1,13 @@
 <template>
     <div id="number-bar">
         <div v-for="index in Math.ceil(size / 2)" :key="index">
-            <q-btn v-for="value in columnNumbers(index)" :key="value" size="xl" color="white" outline padding="none" class="number-btn" @click="() => $emit('click', value)"
-                ><div style="display: flex; flex-direction: column; height: 100%; justify-content: flex-start" :class="classObject(value)">
+            <q-btn v-for="value in columnNumbers(index)" :key="value" size="xl" color="white" outline padding="none" class="number-btn" @click="() => $emit('click', value)">
+                <div style="display: flex; flex-direction: column; height: 100%; justify-content: flex-start" :class="classObject(value)">
                     {{ value }}
                     <q-icon name="close" class="number-icon active-icon q-pa-none q-ma-none" padding="none" size="sm" />
                 </div>
             </q-btn>
+            <div v-if="columnNumbers(index).length === 1" class="number-btn"></div>
         </div>
     </div>
 </template>
@@ -70,7 +71,7 @@ export default defineComponent({
     display: flex;
     flex-direction: column;
     flex-wrap: nowrap;
-    justify-content: flex-start;
+    justify-content: space-evenly;
     align-items: center;
 }
 
@@ -80,7 +81,7 @@ export default defineComponent({
     margin-top: 3px;
     margin-bottom: 3px;
     width: 2em;
-    height: 45%;
+    height: 40%;
     flex-grow: 0;
     flex-shrink: 0;
 }

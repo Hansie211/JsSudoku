@@ -220,7 +220,7 @@ export default defineComponent({
 #action-bar {
     background-color: var(--q-accent);
 
-    height: 200px;
+    height: 230px;
     flex-grow: 0;
     flex-shrink: 0;
     display: flex;
