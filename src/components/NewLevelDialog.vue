@@ -7,8 +7,8 @@
             </q-card-section>
             <q-card-section class="text-h6"> Niveau </q-card-section>
             <q-card-section class="q-gutter-y-md">
-                <q-btn v-for="difficulty in Difficulty" :key="difficulty.level" color="primary" outline size="lg" align="left" class="full-width" @click="() => onOKClick(difficulty)">
-                    <div style="display: flex; flex-direction: row; flex-wrap: nowrap; width: 100%; height: 100%">
+                <q-btn v-for="difficulty in Difficulty" :key="difficulty.level" color="primary" outline size="sm" align="left" class="full-width" @click="() => onOKClick(difficulty)">
+                    <div style="display: flex; flex-direction: row; flex-wrap: nowrap; align-items: center; width: 100%; height: 40px; font-size: 1.4em">
                         <span>{{ difficulty.name }}</span>
                         <q-space />
                         <difficulty-rating size="sm" :level="difficulty.level" />
