@@ -115,6 +115,7 @@ export default defineComponent({
             this.$q.loading.hide();
         },
         showSettings() {
+            this.gameState.timer.paused = true;
             this.$q
                 .dialog({
                     component: SettingsScreen,
@@ -132,6 +133,9 @@ export default defineComponent({
                             this.gameState.resetLevel();
                             break;
                     }
+                })
+                .onDismiss(() => {
+                    this.gameState.timer.paused = false;
                 });
         },
 
