@@ -41,6 +41,10 @@ export default defineComponent({
             type: Array,
             default: () => [],
         },
+        selectedNumber: {
+            type: Number,
+            default: 0,
+        },
     },
     emits: ["click"],
     methods: {
@@ -49,6 +53,8 @@ export default defineComponent({
                 "active-number": this.activeNumbers.includes(value),
                 "inactive-number": this.inactiveNumbers.includes(value),
                 "completed-number": this.completedNumbers.includes(value),
+                "selected-number": this.selectedNumber === value,
+                "unselected-number": this.selectedNumber > 0 && this.selectedNumber !== value,
             };
         },
         columnNumbers(colIndex) {
@@ -112,7 +118,8 @@ export default defineComponent({
     display: block;
 }
 
-.inactive-number {
+.inactive-number,
+.unselected-number {
     opacity: 0.6;
 }
 
@@ -122,5 +129,10 @@ export default defineComponent({
     top: 0;
     bottom: 0;
     border-bottom: 1px double black;
+}
+
+.selected-number {
+    font-weight: 800;
+    box-shadow: 0px 0px 20px 6px #0ff;
 }
 </style>

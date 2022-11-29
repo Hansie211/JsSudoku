@@ -20,7 +20,7 @@
                     <q-btn icon="backspace" flat round size="md" @click="clearCell" />
                 </div>
 
-                <number-bar :size="9" @click="onTapNumber" :activeNumbers="activeNumbers" :inactiveNumbers="inactiveNumbers" :completedNumbers="completedNumbers" />
+                <number-bar :size="9" @click="onTapNumber" :activeNumbers="activeNumbers" :inactiveNumbers="selectCellMode ? inactiveNumbers : []" :completedNumbers="completedNumbers" :selectedNumber="selectNumberMode ? selectedValue : 0" />
             </div>
         </div>
     </q-page>
