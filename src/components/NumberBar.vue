@@ -2,9 +2,9 @@
     <div id="number-bar">
         <div v-for="index in Math.ceil(size / 2)" :key="index">
             <q-btn v-for="value in columnNumbers(index)" :key="value" size="xl" color="white" outline padding="none" class="number-btn" @click="() => $emit('click', value)"
-                ><div style="display: flex; flex-direction: column">
+                ><div style="display: flex; flex-direction: column; height: 100%; justify-content: flex-start" :class="classObject(value)">
                     {{ value }}
-                    <q-icon :color="activeNumbers.includes(value) ? '' : 'transparent'" name="close" class="number-icon q-pa-none q-ma-none" padding="none" size="sm" />
+                    <q-icon name="close" class="number-icon active-icon q-pa-none q-ma-none" padding="none" size="sm" />
                 </div>
             </q-btn>
         </div>
@@ -20,14 +20,25 @@ export default defineComponent({
             type: Number,
             required: true,
         },
+        /** @type {Array<Number> */
         activeNumbers: {
+            type: Array,
+            default: () => [],
+        },
+        /** @type {Array<Number> */
+        inactiveNumbers: {
             type: Array,
             default: () => [],
         },
     },
     emits: ["click"],
-    setup() {},
     methods: {
+        classObject(value) {
+            return {
+                "active-number": this.activeNumbers.includes(value),
+                "inactive-number": this.inactiveNumbers.includes(value),
+            };
+        },
         columnNumbers(colIndex) {
             const lowVal = colIndex;
             const highVal = colIndex + Math.ceil(this.size / 2);
@@ -69,11 +80,24 @@ export default defineComponent({
     margin-top: 3px;
     margin-bottom: 3px;
     width: 2em;
-    height: 46%;
+    height: 45%;
+    flex-grow: 0;
+    flex-shrink: 0;
 }
 
 .number-icon {
     font-size: 0.5em !important;
-    margin-top: -5px;
+}
+
+.active-icon {
+    opacity: 0;
+}
+
+.active-number > .active-icon {
+    opacity: 1;
+}
+
+.inactive-number {
+    opacity: 0.6;
 }
 </style>

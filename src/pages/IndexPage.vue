@@ -20,7 +20,7 @@
                     <q-btn icon="backspace" flat round size="md" @click="clearCell" />
                 </div>
 
-                <number-bar :size="9" @click="placeNumber" :activeNumbers="activeNumbers" />
+                <number-bar :size="9" @click="placeNumber" :activeNumbers="activeNumbers" :inactiveNumbers="inactiveNumbers" />
             </div>
         </div>
     </q-page>
@@ -29,9 +29,9 @@
 <script>
 import SudokuBoard from "src/components/SudokuBoard.vue";
 import SettingsScreen from "src/components/SettingsScreen";
-import { StructureDefinitions } from "src/lib/sudoku/board";
+import { BoardStructure, StructureDefinitions } from "src/lib/sudoku/board";
 import { defineComponent, reactive, ref, toRef } from "vue";
-import { Cell } from "src/lib/reactiveSoduku";
+import PuzzleBoard, { Cell } from "src/lib/reactiveSoduku";
 import { useSettingsStore } from "src/stores/settings-store";
 import NumberBar from "src/components/NumberBar";
 import VictoryScreen from "src/components/VictoryScreen";
@@ -171,6 +171,29 @@ export default defineComponent({
             if (this.selectedCell.value) return [];
 
             return this.selectedCell.notes.values;
+        },
+        inactiveNumbers() {
+            if (!this.selectedCell) return [];
+
+            if (this.selectedCell.isStatic)
+                return Array(this.boardSize)
+                    .fill(null)
+                    .map((_, idx) => idx + 1);
+
+            const getVal = (x, y) => this.gameState.puzzle.getCell({ x, y }).value;
+
+            const strucs = [this.selectedCell.row, this.selectedCell.column, this.selectedCell.square];
+            const values = strucs
+                .map((struct) =>
+                    Array(this.boardSize)
+                        .fill(null)
+                        .map((_, idx) => getVal(...struct.get(idx)))
+                        .filter((v) => v > 0)
+                )
+                .reduce((arr, curr) => arr.concat(curr), [])
+                .filter((item, index, arr) => arr.indexOf(item) === index);
+
+            return values;
         },
         puzzleTime() {
             const time = this.gameState.timer.time;
