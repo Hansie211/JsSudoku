@@ -1,9 +1,9 @@
 <template>
     <q-dialog ref="dialog" @hide="onDialogHide">
         <q-card style="width: 80vw">
-            <q-card-section>
+            <q-item-label class="q-pb-sm" header>Options</q-item-label>
+            <q-card-section class="q-pt-none">
                 <q-list style="font-size: 1.2em">
-                    <q-item-label header>Options</q-item-label>
                     <q-item class="text-body1" clickable v-ripple v-for="setting in settingsToggles" :key="setting.name" @click="() => (setting.prop.value = !setting.prop.value)">
                         <q-item-section> {{ setting.name }} </q-item-section>
                         <q-item-section side>
@@ -12,9 +12,13 @@
                     </q-item>
                 </q-list>
             </q-card-section>
-            <q-card-section class="q-gutter-y-md">
+            <q-separator />
+            <q-card-section>
                 <div class="text-subtitle2">Current level: {{ currentLevel }}</div>
                 <div class="text-subtitle2">Difficulty: {{ difficulty.name }}</div>
+            </q-card-section>
+            <q-separator />
+            <q-card-section class="q-gutter-y-sm">
                 <q-btn label="Clear data" flat color="negative" class="full-width" @click="clearCache" />
                 <q-btn label="Retry level" flat color="negative" class="full-width" @click="onResetGame" />
                 <q-btn label="New level" flat color="primary" class="full-width" @click="onNewGame" />

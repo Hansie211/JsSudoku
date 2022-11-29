@@ -1,6 +1,6 @@
 <template>
     <q-page id="page" v-if="gameState.puzzle">
-        <div style="padding: 10px">
+        <div>
             <sudoku-board ref="sudoku" :puzzle="gameState.puzzle" :key="renderKey" size="4.7vw" @cellSelected="cellSelected" />
         </div>
         <div id="bottom-bar" class="flex column full-width">
