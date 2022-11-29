@@ -182,10 +182,6 @@ export default defineComponent({
     text-align: center;
 }
 
-.cell:hover {
-    border-color: #444;
-}
-
 .selected {
     background-color: var(--cell-selected) !important;
 }
