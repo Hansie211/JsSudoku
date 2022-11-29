@@ -1,8 +1,8 @@
 <template>
     <div id="number-bar">
         <div v-for="index in Math.ceil(size / 2)" :key="index">
-            <q-btn v-for="value in columnNumbers(index)" :key="value" size="xl" color="white" outline padding="none" class="number-btn" @click="() => $emit('click', value)">
-                <div style="display: flex; flex-direction: column; height: 100%; justify-content: flex-start; width: 100%; padding-bottom: 10px; padding-top: 10px" :class="classObject(value)">
+            <q-btn v-for="value in columnNumbers(index)" :key="value" size="xl" color="white" padding="none" class="number-btn" :class="classObject(value)" @click="() => $emit('click', value)">
+                <div style="display: flex; flex-direction: column; height: 100%; justify-content: flex-start; width: 100%; padding-bottom: 10px; padding-top: 10px; color: black">
                     <div style="position: relative; display: flex; justify-content: center; align-items: center; margin-top: -8px; margin-bottom: 4px">
                         {{ value }}
                     </div>
