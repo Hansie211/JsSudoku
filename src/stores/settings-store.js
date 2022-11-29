@@ -9,6 +9,7 @@ export const useSettingsStore = defineStore("settings", () => {
         showTime: ref(undefined),
         showHints: ref(undefined),
         markImpossibleNumbers: ref(undefined),
+        placeNumbersOnSelect: ref(undefined),
     };
 
     const saveManager = new SaveManager();

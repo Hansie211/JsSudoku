@@ -83,6 +83,13 @@ export default defineComponent({
                     set: (v) => (settings.markImpossibleNumbers = v),
                 }),
             },
+            {
+                name: "Place numbers on select",
+                prop: computed({
+                    get: () => settings.placeNumbersOnSelect,
+                    set: (v) => (settings.placeNumbersOnSelect = v),
+                }),
+            },
         ];
 
         return {
