@@ -36,7 +36,7 @@
         "logic": true
     },
     {
-        "name": "Extra Hard",
+        "name": "Difficult",
         "cells": 56,
         "level": 6,
         "logic": false
