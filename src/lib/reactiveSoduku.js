@@ -206,6 +206,7 @@ export default class PuzzleBoard {
     }
 
     /**
+     * @param {PuzzleBoard} result
      * @param {Object} obj
      * @returns {PuzzleBoard}
      */
