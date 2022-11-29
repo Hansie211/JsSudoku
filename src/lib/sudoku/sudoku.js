@@ -4,18 +4,7 @@ import Notebook from "./notebook";
 import { RNG, shuffleList } from "./RNG";
 
 /**
- * @param {Number} emptySquares
- * @param {Number} seed
- * @returns {Promise<Array<Board>>}
  */
-export function getPuzzleAsync(emptySquares, seed) {
-    return new Promise((resolve, reject) => {
-        try {
-            resolve(getPuzzle(emptySquares, seed));
-        } catch (error) {
-            reject(error);
-        }
-    });
 }
 
 /**
