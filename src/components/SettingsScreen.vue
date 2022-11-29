@@ -7,7 +7,7 @@
                     <q-item class="text-body1" clickable v-ripple v-for="setting in settingsToggles" :key="setting.name" @click="() => (setting.prop.value = !setting.prop.value)">
                         <q-item-section> {{ setting.name }} </q-item-section>
                         <q-item-section side>
-                            <q-toggle keep-color color="primary" size="lg" v-model="setting.prop.value" :icon="setting.icon" />
+                            <q-toggle color="primary" size="md" v-model="setting.prop.value" checked-icon="check" unchecked-icon="clear" />
                         </q-item-section>
                     </q-item>
                 </q-list>
@@ -53,7 +53,6 @@ export default defineComponent({
         const settingsToggles = [
             {
                 name: "Display time",
-                icon: "o_timer",
                 prop: computed({
                     get: () => settings.showTime,
                     set: (v) => (settings.showTime = v),
@@ -61,7 +60,6 @@ export default defineComponent({
             },
             {
                 name: "Highlight errors",
-                icon: "o_fact_check",
                 prop: computed({
                     get: () => settings.showErrors,
                     set: (v) => (settings.showErrors = v),
@@ -69,7 +67,6 @@ export default defineComponent({
             },
             {
                 name: "Allow hints",
-                icon: "o_tips_and_updates",
                 prop: computed({
                     get: () => settings.showHints,
                     set: (v) => (settings.showHints = v),
