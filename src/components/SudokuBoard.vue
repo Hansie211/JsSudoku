@@ -14,6 +14,7 @@
                     :isSelected="selectedCellId === cell.id"
                     :isValueSelected="selectedCell?.hasValue() && selectedCell?.value === cell.value"
                     @select="() => onSelectCell(cell.id)"
+                    @update="(v, o) => $emit('cellUpdated', ...[cell.id, v, o])"
                     :size="size"
                 />
             </div>
@@ -40,7 +41,7 @@ export default defineComponent({
             default: "1.0em",
         },
     },
-    emits: ["cellSelected"],
+    emits: ["cellSelected", "cellUpdated"],
     data() {
         return {
             selectedCellId: null, //this.puzzle.cells[40].id,

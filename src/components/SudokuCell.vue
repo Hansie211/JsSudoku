@@ -26,7 +26,7 @@ import { useSettingsStore } from "src/stores/settings-store";
 
 export default defineComponent({
     name: "SudokuCell",
-    emits: ["select"],
+    emits: ["select", "update"],
     props: {
         puzzle: {
             type: PuzzleBoard,
@@ -98,7 +98,14 @@ export default defineComponent({
                 .map((_, index) => this.cell.notes.hasValue(index + 1));
         },
     },
-    watch: {},
+    watch: {
+        "cell.value": {
+            handler(value, oldValue) {
+                this.$emit("update", ...[value, oldValue]);
+            },
+            immediate: true,
+        },
+    },
 });
 </script>
 <style scoped>

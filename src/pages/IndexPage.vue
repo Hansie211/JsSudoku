@@ -1,7 +1,7 @@
 <template>
     <q-page id="page" v-if="gameState.puzzle">
         <div>
-            <sudoku-board ref="sudoku" :puzzle="gameState.puzzle" :key="renderKey" size="4.7vw" @cellSelected="cellSelected" />
+            <sudoku-board ref="sudoku" :puzzle="gameState.puzzle" :key="renderKey" size="4.7vw" @cellSelected="cellSelected" @cellUpdated="cellUpdated" />
         </div>
         <div id="bottom-bar" class="flex column full-width">
             <div id="info-bar" class="flex row full-width q-px-sm">
@@ -20,7 +20,7 @@
                     <q-btn icon="backspace" flat round size="md" @click="clearCell" />
                 </div>
 
-                <number-bar :size="9" @click="placeNumber" :activeNumbers="activeNumbers" :inactiveNumbers="inactiveNumbers" />
+                <number-bar :size="9" @click="onTapNumber" :activeNumbers="activeNumbers" :inactiveNumbers="inactiveNumbers" :completedNumbers="completedNumbers" />
             </div>
         </div>
     </q-page>
@@ -54,8 +54,6 @@ export default defineComponent({
         };
     },
     created() {
-        this.gameState.saveManager.load();
-
         this.gameState.eventBus.on("victory", (event) => {
             this.showVictory();
         });
@@ -64,12 +62,16 @@ export default defineComponent({
             this.showError(event.message);
         });
 
+        this.gameState.saveManager.load();
+        this.gameState.eventBus.dispatch("start-level");
+
         this.gameState.timer.start();
     },
     data() {
         return {
             noteMode: false,
             selectedCellId: null,
+            numCount: Array(StructureDefinitions.SIZE).fill(0),
         };
     },
     methods: {
@@ -139,9 +141,14 @@ export default defineComponent({
                 });
         },
 
+        onTapNumber(num) {
+            this.placeNumber(num);
+        },
         placeNumber(num) {
             if (this.noteMode) this.gameState.placeNote(this.selectedCellId, num);
-            else this.gameState.placeNum(this.selectedCellId, num);
+            else {
+                this.gameState.placeNum(this.selectedCellId, num);
+            }
         },
 
         clearCell() {
@@ -152,6 +159,10 @@ export default defineComponent({
         },
         cellSelected(id) {
             this.selectedCellId = id;
+        },
+        cellUpdated(id, nval, oval) {
+            if (nval) this.numCount[nval - 1]++;
+            if (oval) this.numCount[oval - 1]--;
         },
         undo() {
             this.gameState.undo();
@@ -173,8 +184,8 @@ export default defineComponent({
             return this.selectedCell.notes.values;
         },
         inactiveNumbers() {
-            if (!this.selectedCell) return [];
             if (!this.settings.markImpossibleNumbers) return [];
+            if (!this.selectedCell) return [];
 
             if (this.selectedCell.isStatic)
                 return Array(this.boardSize)
@@ -202,6 +213,9 @@ export default defineComponent({
             const m = 0 + Math.floor(time / 60);
 
             return m.toString().padStart(2, "0") + ":" + s.toString().padStart(2, "0");
+        },
+        completedNumbers() {
+            return this.numCount.map((v, idx) => (v >= StructureDefinitions.SIZE ? idx + 1 : null)).filter((v) => v !== null);
         },
         gameDifficulty() {
             return Difficulty.find((x) => x.level === this.gameState.puzzle?.difficultyLevel) || Difficulty[0];

@@ -2,9 +2,14 @@
     <div id="number-bar">
         <div v-for="index in Math.ceil(size / 2)" :key="index">
             <q-btn v-for="value in columnNumbers(index)" :key="value" size="xl" color="white" outline padding="none" class="number-btn" @click="() => $emit('click', value)">
-                <div style="display: flex; flex-direction: column; height: 100%; justify-content: flex-start" :class="classObject(value)">
-                    {{ value }}
-                    <q-icon name="close" class="number-icon active-icon q-pa-none q-ma-none" padding="none" size="sm" />
+                <div style="display: flex; flex-direction: column; height: 100%; justify-content: flex-start; width: 100%; padding-bottom: 10px; padding-top: 10px" :class="classObject(value)">
+                    <div style="position: relative; display: flex; justify-content: center; align-items: center; margin-top: -8px; margin-bottom: 4px">
+                        {{ value }}
+                    </div>
+                    <div style="height: 100%; display: flex; flex-direction: row; justify-content: center; align-items: center">
+                        <q-icon name="adjust" class="number-icon active-icon q-pa-none q-ma-none" padding="none" size="sm" />
+                        <q-icon name="done_all" class="number-icon completed-icon q-pa-none q-ma-none" padding="none" size="sm" />
+                    </div>
                 </div>
             </q-btn>
             <div v-if="columnNumbers(index).length === 1" class="number-btn"></div>
@@ -31,13 +36,20 @@ export default defineComponent({
             type: Array,
             default: () => [],
         },
+        /** @type {Array<Number> */
+        completedNumbers: {
+            type: Array,
+            default: () => [],
+        },
     },
     emits: ["click"],
     methods: {
         classObject(value) {
+            console.log(this.completedNumbers);
             return {
                 "active-number": this.activeNumbers.includes(value),
                 "inactive-number": this.inactiveNumbers.includes(value),
+                "completed-number": this.completedNumbers.includes(value),
             };
         },
         columnNumbers(colIndex) {
@@ -88,17 +100,28 @@ export default defineComponent({
 
 .number-icon {
     font-size: 0.5em !important;
+    display: none;
+    margin-left: 1px;
+    margin-right: 1px;
 }
 
-.active-icon {
-    opacity: 0;
+.active-number .active-icon {
+    display: block;
 }
 
-.active-number > .active-icon {
-    opacity: 1;
+.completed-number .completed-icon {
+    display: block;
 }
 
 .inactive-number {
     opacity: 0.6;
+}
+
+.circle {
+    position: absolute;
+    width: 80%;
+    top: 0;
+    bottom: 0;
+    border-bottom: 1px double black;
 }
 </style>
