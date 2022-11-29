@@ -45,7 +45,6 @@ export default defineComponent({
     emits: ["click"],
     methods: {
         classObject(value) {
-            console.log(this.completedNumbers);
             return {
                 "active-number": this.activeNumbers.includes(value),
                 "inactive-number": this.inactiveNumbers.includes(value),
