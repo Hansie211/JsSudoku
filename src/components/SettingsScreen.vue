@@ -1,5 +1,5 @@
 <template>
-    <q-dialog ref="dialog">
+    <q-dialog ref="dialog" @hide="onDialogHide">
         <q-card style="width: 80vw">
             <q-card-section>
                 <q-list style="font-size: 1.2em">
