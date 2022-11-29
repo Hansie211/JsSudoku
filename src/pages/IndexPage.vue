@@ -71,6 +71,7 @@ export default defineComponent({
             noteMode: false,
             selectedCellId: null,
             numCount: Array(StructureDefinitions.SIZE).fill(0),
+            selectedValue: 0,
         };
     },
     methods: {
@@ -141,7 +142,10 @@ export default defineComponent({
         },
 
         onTapNumber(num) {
-            this.placeNumber(num);
+            if (this.selectCellMode) this.placeNumber(num);
+            if (this.selectNumberMode) {
+                this.selectedValue = this.selectedValue !== num ? num : 0;
+            }
         },
         placeNumber(num) {
             if (this.noteMode) this.gameState.placeNote(this.selectedCellId, num);
@@ -156,8 +160,14 @@ export default defineComponent({
         hint() {
             this.gameState.hint();
         },
-        cellSelected(id) {
+        cellClick(id) {
             this.selectedCellId = id;
+
+            if (this.selectNumberMode) {
+                if (this.selectedValue && !this.selectedCell.isStatic) {
+                    this.placeNumber(this.selectedValue);
+                }
+            }
         },
         cellUpdated(id, nval, oval) {
             if (nval) this.numCount[nval - 1]++;
@@ -165,6 +175,13 @@ export default defineComponent({
         },
         undo() {
             this.gameState.undo();
+        },
+
+        initializeSelectCellMode() {
+            this.selectedValue = this.selectedCell?.value ?? 0;
+        },
+        initializeSelectNumberMode() {
+            this.selectedValue = 1;
         },
     },
     computed: {
@@ -218,6 +235,29 @@ export default defineComponent({
         },
         gameDifficulty() {
             return Difficulty.find((x) => x.level === this.gameState.puzzle?.difficultyLevel) || Difficulty[0];
+        },
+        selectCellMode() {
+            return !this.settings.placeNumbersOnSelect;
+        },
+        selectNumberMode() {
+            return !this.selectCellMode;
+        },
+    },
+    watch: {
+        "selectedCell.value"() {
+            if (this.selectCellMode) this.selectedValue = this.selectedCell.value;
+        },
+        selectCellMode: {
+            handler(nval) {
+                if (nval === true) this.initializeSelectCellMode();
+            },
+            immediate: true,
+        },
+        selectNumberMode: {
+            handler(nval) {
+                if (nval === true) this.initializeSelectNumberMode();
+            },
+            immediate: true,
         },
     },
 });

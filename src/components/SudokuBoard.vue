@@ -36,6 +36,10 @@ export default defineComponent({
             type: PuzzleBoard,
             required: true,
         },
+        selectedValue: {
+            type: Number,
+            default: 0,
+        },
         size: {
             type: String,
             default: "1.0em",
