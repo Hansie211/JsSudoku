@@ -12,8 +12,8 @@
                     :isColumnSelected="selectedCell?.column.index === cell.column.index"
                     :isSquareSelected="selectedCell?.square.index === cell.square.index"
                     :isSelected="selectedCellId === cell.id"
-                    :isValueSelected="selectedCell?.hasValue() && selectedCell?.value === cell.value"
-                    @select="() => onSelectCell(cell.id)"
+                    :isValueSelected="cell.hasValue() && selectedValue === cell.value"
+                    @click="() => onCellClick(cell.id)"
                     @update="(v, o) => $emit('cellUpdated', ...[cell.id, v, o])"
                     :size="size"
                 />
@@ -41,16 +41,16 @@ export default defineComponent({
             default: "1.0em",
         },
     },
-    emits: ["cellSelected", "cellUpdated"],
+    emits: ["click", "cellUpdated"],
     data() {
         return {
             selectedCellId: null, //this.puzzle.cells[40].id,
         };
     },
     methods: {
-        onSelectCell(id) {
+        onCellClick(id) {
             this.selectedCellId = id;
-            this.$emit("cellSelected", id);
+            this.$emit("click", id);
         },
         getSquareCells(squareIndex) {
             return Array(StructureDefinitions.SIZE)

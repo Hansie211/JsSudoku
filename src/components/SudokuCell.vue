@@ -26,7 +26,7 @@ import { useSettingsStore } from "src/stores/settings-store";
 
 export default defineComponent({
     name: "SudokuCell",
-    emits: ["select", "update"],
+    emits: ["click", "update"],
     props: {
         puzzle: {
             type: PuzzleBoard,
@@ -70,8 +70,7 @@ export default defineComponent({
     },
     methods: {
         onClick() {
-            if (this.isSelected) return;
-            this.$emit("select");
+            this.$emit("click");
         },
     },
     computed: {
