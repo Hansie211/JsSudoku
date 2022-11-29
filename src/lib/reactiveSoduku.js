@@ -1,4 +1,3 @@
-// import { ref } from "vue";
 import { reactive } from "vue";
 import Board, { Column, Row, Square, StructureDefinitions } from "./sudoku/board";
 
@@ -96,7 +95,7 @@ export class Cell {
         cell._square = StructureDefinitions.squares[Math.floor(cell.position.x / StructureDefinitions.BASE_NUMBER) + Math.floor(cell.position.y / StructureDefinitions.BASE_NUMBER) * StructureDefinitions.BASE_NUMBER];
     }
 
-    /** @type {ref<Number>} */
+    /** @type {Number} */
     value;
 
     /** @type {Position} */
