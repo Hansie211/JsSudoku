@@ -1,7 +1,7 @@
 <template>
     <q-page id="page" v-if="gameState.puzzle">
         <div>
-            <sudoku-board ref="sudoku" :puzzle="gameState.puzzle" :key="renderKey" size="4.7vw" @cellSelected="cellSelected" @cellUpdated="cellUpdated" />
+            <sudoku-board ref="sudoku" :puzzle="gameState.puzzle" :selectedValue="selectedValue" size="4.7vw" @click="cellClick" @cellUpdated="cellUpdated" />
         </div>
         <div id="bottom-bar" class="flex column full-width">
             <div id="info-bar" class="flex row full-width q-px-sm">
@@ -50,7 +50,6 @@ export default defineComponent({
             settings,
             /** @type {GameStateManager} */
             gameState,
-            renderKey: ref(0),
         };
     },
     created() {
