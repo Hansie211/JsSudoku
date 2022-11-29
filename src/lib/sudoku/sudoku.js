@@ -16,10 +16,10 @@ function getFirstItem(array) {
     return array.find((x) => x !== undefined);
 }
 
+ * @param {Number} emptyCells
  * @param {Number} seed
  * @returns {Array<Board>}
  */
-export function getPuzzle(emptySquares, seed) {
     const rng = new RNG(seed);
 
     const skeleton = Board.randomSkeleton(rng);
@@ -34,7 +34,7 @@ export function getPuzzle(emptySquares, seed) {
         .reduce((result, current) => result.concat(current), []);
     shuffleList(allPositions, rng);
 
-    var squaresRemoved = 0;
+    var cellsCleared = 0;
     const puzzleBoard = board.duplicate();
 
     for (var i = 0; i < allPositions.length; i++) {
@@ -47,8 +47,8 @@ export function getPuzzle(emptySquares, seed) {
         if (solutions.length !== 1) {
             puzzleBoard.setCell(x, y, value); // core number
         } else {
-            squaresRemoved++;
-            if (squaresRemoved >= emptySquares) break;
+            cellsCleared++;
+            if (cellsCleared >= emptyCells) break;
         }
     }
 
