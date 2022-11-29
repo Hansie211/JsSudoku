@@ -1,4 +1,3 @@
-import { reactive } from "vue";
 import Board, { Column, Row, Square, StructureDefinitions } from "./sudoku/board";
 
 export class Position {
@@ -80,7 +79,7 @@ export class Notes {
     }
 
     constructor() {
-        this.values = reactive([]);
+        this.values = [];
     }
 }
 
@@ -217,7 +216,7 @@ export default class PuzzleBoard {
 
         result.cells = obj.cells.map((info) => {
             const pos = new Position(info.x, info.y);
-            const cell = reactive(new Cell(pos, info.static ? info.value : 0));
+            const cell = new Cell(pos, info.static ? info.value : 0);
             if (!info.static) cell.value = info.value;
 
             info.notes.forEach((n) => cell.notes.addValue(n));
@@ -298,7 +297,7 @@ export default class PuzzleBoard {
 
                 result.solution[index] = solutionValue;
 
-                const cell = reactive(new Cell(position, boardValue));
+                const cell = new Cell(position, boardValue);
                 result.cells[index] = cell;
             }
         }
