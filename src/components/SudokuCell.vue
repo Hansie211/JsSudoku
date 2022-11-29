@@ -90,7 +90,7 @@ export default defineComponent({
             return StructureDefinitions.SIZE;
         },
         isError() {
-            return this.cell.value > 0 && this.cell.value !== this.puzzle.getSolutionValue(this.cell.position);
+            return this.cell.hasValue() && this.cell.value !== this.puzzle.getSolutionValue({ position: this.cell.position });
         },
         notes() {
             return Array(this.boardSize)
