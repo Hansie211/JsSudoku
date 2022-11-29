@@ -24,7 +24,7 @@
 
 <script>
 import { StructureDefinitions } from "src/lib/sudoku/board";
-import PuzzleBoard, { Position } from "src/lib/reactiveSoduku";
+import PuzzleBoard from "src/lib/reactiveSoduku";
 import { defineComponent } from "vue";
 import SudokuCell from "./SudokuCell.vue";
 
