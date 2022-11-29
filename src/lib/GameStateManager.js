@@ -224,6 +224,7 @@ export default class GameStateManager {
         this.timer.set(0);
         this.memory.clear();
         this.hintCount = 0;
+        this.timer.paused = false;
 
         this.saveManager.save();
     }
