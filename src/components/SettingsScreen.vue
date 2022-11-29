@@ -118,7 +118,7 @@ export default defineComponent({
         },
 
         confirm(message) {
-            return new Promise((resolve, reject) => {
+            return new Promise((resolve) => {
                 this.$q
                     .dialog({
                         title: "Warning",
@@ -131,7 +131,7 @@ export default defineComponent({
                         },
                     })
                     .onOk(() => resolve(true))
-                    .onCancel(() => reject(false));
+                    .onCancel(() => resolve(false));
             });
         },
 
