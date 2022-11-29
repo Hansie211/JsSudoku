@@ -56,9 +56,7 @@ export default defineComponent({
                 .fill(null)
                 .map((_, index) => {
                     const [x, y] = StructureDefinitions.squares[squareIndex].get(index);
-                    const position = new Position(x, y);
-                    const cellIndex = PuzzleBoard.toIndex(position);
-                    return this.puzzle.cells[cellIndex];
+                    return this.puzzle.getCell({ x, y });
                 });
         },
     },
