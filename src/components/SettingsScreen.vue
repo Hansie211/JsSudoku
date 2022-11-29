@@ -18,11 +18,11 @@
                 <div class="text-subtitle2">Difficulty: {{ difficulty.name }}</div>
             </q-card-section>
             <q-separator />
-            <q-card-section class="q-gutter-y-sm">
-                <q-btn label="Clear data" flat color="negative" class="full-width" @click="clearCache" />
-                <q-btn label="Retry level" flat color="negative" class="full-width" @click="onResetGame" />
-                <q-btn label="New level" flat color="primary" class="full-width" @click="onNewGame" />
-                <q-btn label="History" flat color="primary" class="full-width" @click="showHistory" />
+            <q-card-section class="q-pb-none q-gutter-y-sm">
+                <q-btn label="Clear app data" outline color="secondary" size="md" class="full-width" @click="clearCache" />
+                <q-btn label="Finished games" outline color="secondary" size="md" class="full-width" @click="showHistory" />
+                <q-btn label="Clear level" push color="negative" size="lg" class="full-width" @click="onResetGame" />
+                <q-btn label="New level" push color="primary" size="lg" class="full-width" @click="onNewGame" />
             </q-card-section>
 
             <q-separator />
@@ -84,7 +84,7 @@ export default defineComponent({
                 }),
             },
             {
-                name: "Place numbers on select",
+                name: "Numbers first mode",
                 prop: computed({
                     get: () => settings.placeNumbersOnSelect,
                     set: (v) => (settings.placeNumbersOnSelect = v),
