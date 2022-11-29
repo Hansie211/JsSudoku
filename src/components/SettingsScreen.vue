@@ -14,6 +14,7 @@
             </q-card-section>
             <q-card-section class="q-gutter-y-md">
                 <div class="text-subtitle2">Current level: {{ currentLevel }}</div>
+                <div class="text-subtitle2">Difficulty: {{ difficulty.name }}</div>
                 <q-btn label="Clear data" flat color="negative" class="full-width" @click="clearCache" />
                 <q-btn label="Retry level" flat color="negative" class="full-width" @click="onResetGame" />
                 <q-btn label="New level" flat color="primary" class="full-width" @click="onNewGame" />
@@ -39,6 +40,10 @@ export default defineComponent({
     props: {
         currentLevel: {
             type: Number,
+            required: true,
+        },
+        difficulty: {
+            type: Object,
             required: true,
         },
     },
