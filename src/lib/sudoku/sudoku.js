@@ -19,7 +19,14 @@ export function getPuzzleAsync(emptySquares, seed) {
 }
 
 /**
- * @param {Number} emptySquares
+ * @template T
+ * @param {Array<T>} array
+ * @returns {T}
+ */
+function getFirstItem(array) {
+    return array.find((x) => x !== undefined);
+}
+
  * @param {Number} seed
  * @returns {Array<Board>}
  */
@@ -29,7 +36,7 @@ export function getPuzzle(emptySquares, seed) {
     const skeleton = Board.randomSkeleton(rng);
     const solver = new Solver();
 
-    const board = solver.getSolutions(skeleton, 1, rng)[0];
+    const board = getFirstItem(await solver.getSolutions(skeleton, 1, rng));
     if (!board) throw new Error("Error creating new solution");
 
     const allPositions = Array(StructureDefinitions.SIZE)
