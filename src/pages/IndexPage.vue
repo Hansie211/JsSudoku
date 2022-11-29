@@ -174,6 +174,7 @@ export default defineComponent({
         },
         inactiveNumbers() {
             if (!this.selectedCell) return [];
+            if (!this.settings.markImpossibleNumbers) return [];
 
             if (this.selectedCell.isStatic)
                 return Array(this.boardSize)

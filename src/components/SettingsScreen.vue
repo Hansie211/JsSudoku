@@ -75,6 +75,13 @@ export default defineComponent({
                     set: (v) => (settings.showHints = v),
                 }),
             },
+            {
+                name: "Mark illegal moves",
+                prop: computed({
+                    get: () => settings.markImpossibleNumbers,
+                    set: (v) => (settings.markImpossibleNumbers = v),
+                }),
+            },
         ];
 
         return {
