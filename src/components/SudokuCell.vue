@@ -83,7 +83,7 @@ export default defineComponent({
                 "column-selected": this.isColumnSelected,
                 "square-selected": this.isSquareSelected,
                 "value-selected": this.isValueSelected,
-                error: this.settings.showErrors && true, //this.isError,
+                error: this.settings.showErrors && this.isError,
             };
         },
         boardSize() {
