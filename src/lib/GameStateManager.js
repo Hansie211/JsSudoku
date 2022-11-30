@@ -136,13 +136,21 @@ export default class GameStateManager {
         const cell = this.puzzle.findCellById(cellId);
         if (!this.__ensureCanEditCell(cell)) return;
 
-        this.__saveMemoryState(cellId, cell.value, { isNote: false, isHint });
-
         if (cell.value === value) {
+            this.__saveMemoryState(cellId, cell.value, { isNote: false, isHint });
             cell.value = 0;
         } else {
+            const cellsWithNote = PuzzleBoard.getSurroundingCells(this.puzzle, cell).filter((cell) => !cell.hasValue() && cell.notes.hasValue(value));
+            const noteStates = cellsWithNote.map((cell) => this.__createMemoryState(cell.id, cell.notes.values, { isNote: true, isHint: false }));
+            const cellState = this.__createMemoryState(cellId, cell.value, { isNote: false, isHint });
+
+            this.__saveMemoryStates(noteStates.concat([cellState]));
+
             cell.value = value;
+            cellsWithNote.forEach((cell) => cell.notes.removeValue(value));
+
             if (isHint) this.hintCount++;
+
             if (this.__updateVictoryState()) return;
         }
 
