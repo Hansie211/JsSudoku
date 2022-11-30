@@ -15,7 +15,7 @@
             <q-separator />
             <q-card-section>
                 <div class="text-subtitle2">Current level: {{ currentLevel }}</div>
-                <div class="text-subtitle2">Difficulty: {{ difficulty.name }}</div>
+                <div class="text-subtitle2 full-width flex row">Difficulty: {{ difficulty.name }}&nbsp;(<difficulty-rating :level="difficulty.level" />)</div>
             </q-card-section>
             <q-separator />
             <q-card-section class="q-pb-none q-gutter-y-sm">
@@ -36,10 +36,12 @@
 <script>
 import { useSettingsStore } from "src/stores/settings-store";
 import { computed, defineComponent } from "vue";
+import DifficultyRating from "./DifficultyRating.vue";
 import NewLevelDialog from "./NewLevelDialog";
 import VictoryHistoryScreen from "./VictoryHistoryScreen.vue";
 
 export default defineComponent({
+    components: { DifficultyRating },
     name: "SettingsScreen",
     props: {
         currentLevel: {
