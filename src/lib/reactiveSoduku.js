@@ -247,21 +247,29 @@ export default class PuzzleBoard {
     /**
      * @param {PuzzleBoard} puzzle
      * @param {Cell} cell
-     * @returns {Array<Number>}
+     * @returns {Array<Cell>}
      */
-    static getSurroundingValues(puzzle, cell) {
-        const getCellValue = (x, y) => puzzle.getCell({ x, y }).value;
-
+    static getSurroundingCells(puzzle, cell) {
         const structs = [cell.row, cell.column, cell.square];
         return structs
             .map((struct) =>
                 Array(StructureDefinitions.SIZE)
                     .fill(null)
-                    .map((_, idx) => getCellValue(...struct.get(idx)))
-                    .filter((v) => v > 0)
+                    .map((_, idx) => puzzle.getCell({ xy: struct.get(idx) }))
             )
             .reduce((arr, curr) => arr.concat(curr), [])
-            .filter((item, index, arr) => arr.indexOf(item) === index);
+            .filter((item, index, arr) => item.id !== cell.id && arr.findIndex((i) => i.id === item.id) === index);
+    }
+
+    /**
+     * @param {PuzzleBoard} puzzle
+     * @param {Cell} cell
+     * @returns {Array<Number>}
+     */
+    static getSurroundingValues(puzzle, cell) {
+        return PuzzleBoard.getSurroundingCells(puzzle, cell)
+            .map((cell) => cell.value)
+            .filter((item, index, arr) => item > 0 && arr.indexOf(item) === index);
     }
 
     /**
