@@ -249,7 +249,7 @@ export default class GameStateManager {
     async newLevel(difficultyLevel, seed) {
         const difficulty = Difficulty.find((item) => item.level === difficultyLevel) ?? Difficulty[0];
 
-        const [solution, board, _seed] = await getPuzzle(difficulty.cells, seed);
+        const [solution, board, _seed] = await getPuzzle(difficulty.cells, seed, difficulty.logic);
         PuzzleBoard.fromBoard(this.puzzle, board, solution, _seed);
         this.puzzle.difficultyLevel = difficultyLevel;
 
