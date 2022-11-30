@@ -5,11 +5,11 @@ import SaveManager, { Savestate } from "src/lib/SaveManager";
 
 export const useSettingsStore = defineStore("settings", () => {
     const settings = {
-        showErrors: ref(undefined),
-        showTime: ref(undefined),
-        showHints: ref(undefined),
-        markImpossibleNumbers: ref(undefined),
-        placeNumbersOnSelect: ref(undefined),
+        showErrors: ref(true),
+        showTime: ref(true),
+        showHints: ref(true),
+        markImpossibleNumbers: ref(true),
+        placeNumbersOnSelect: ref(false),
     };
 
     const saveManager = new SaveManager();
@@ -19,7 +19,7 @@ export const useSettingsStore = defineStore("settings", () => {
                 key,
                 () => settings[key].value,
                 (v) => (settings[key].value = v),
-                () => (settings[key].value = true)
+                () => {}
             )
         );
     });
