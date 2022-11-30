@@ -6,6 +6,7 @@ import Timer from "./Timer";
 import Difficulty from "src/data/difficulty.json";
 import { getPuzzle } from "./sudoku/sudoku";
 import DefaultPuzzle from "src/data/default-puzzle.json";
+import { StructureDefinitions } from "./sudoku/board";
 
 export default class GameStateManager {
     /** @type {PuzzleBoard} */
@@ -205,14 +206,29 @@ export default class GameStateManager {
     }
 
     hint() {
-        const nextOpenCell = this.puzzle.cells.find((cell) => !cell.hasValue());
-        if (!nextOpenCell) return;
+        const cellWithLeastOptions = this.puzzle.cells.reduce(
+            (state, cell) => {
+                if (cell.hasValue()) return state;
+                if (state.optionCount <= 1) return state;
 
-        const soltionValue = this.puzzle.solution[PuzzleBoard.toIndex({ position: nextOpenCell.position })];
+                const surroundingValues = PuzzleBoard.getSurroundingValues(this.puzzle, cell);
+                const optionCount = StructureDefinitions.SIZE - surroundingValues.length;
+                if (optionCount < state.lowest) {
+                    state.lowest = optionCount;
+                    state.cell = cell;
+                }
+                return state;
+            },
+            { lowest: StructureDefinitions.SIZE + 1, cell: null }
+        ).cell;
 
-        this.__saveMemoryState(nextOpenCell.id, 0, { isNote: false, isHint: true });
+        if (!cellWithLeastOptions) return;
 
-        nextOpenCell.value = soltionValue;
+        const soltionValue = this.puzzle.solution[PuzzleBoard.toIndex({ position: cellWithLeastOptions.position })];
+
+        this.__saveMemoryState(cellWithLeastOptions.id, 0, { isNote: false, isHint: true });
+
+        cellWithLeastOptions.value = soltionValue;
         this.hintCount++;
 
         if (this.__updateVictoryState()) return;
