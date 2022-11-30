@@ -70,6 +70,10 @@ export class Notes {
         this.values.length = 0;
     }
 
+    count() {
+        return this.values.length;
+    }
+
     /**
      * @param {Array<Number>} values
      */
