@@ -87,7 +87,14 @@ export default class GameStateManager {
      */
     __saveMemoryState(cellId, value, { isNote, isHint } = {}) {
         const state = this.__createMemoryState(cellId, value, { isNote, isHint });
-        this.memory.store(state);
+        this.__saveMemoryStates([state]);
+    }
+
+    /**
+     * @param {Array} states
+     */
+    __saveMemoryStates(states) {
+        this.memory.store(states);
     }
 
     __updateVictoryState() {
