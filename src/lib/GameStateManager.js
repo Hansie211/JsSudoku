@@ -138,6 +138,8 @@ export default class GameStateManager {
             if (this.__updateVictoryState()) return;
         }
 
+        if (isHint) this.hintCount++;
+
         this.saveManager.save();
     }
 
@@ -226,14 +228,7 @@ export default class GameStateManager {
 
         const soltionValue = this.puzzle.solution[PuzzleBoard.toIndex({ position: cellWithLeastOptions.position })];
 
-        this.__saveMemoryState(cellWithLeastOptions.id, 0, { isNote: false, isHint: true });
-
-        cellWithLeastOptions.value = soltionValue;
-        this.hintCount++;
-
-        if (this.__updateVictoryState()) return;
-
-        this.saveManager.save();
+        this.placeNum(cellWithLeastOptions.id, soltionValue, { isHint: true });
     }
 
     resetGameState() {
