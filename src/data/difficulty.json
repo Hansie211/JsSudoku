@@ -2,55 +2,46 @@
     {
         "name": "Easier Than Easy",
         "cells": 9,
-        "level": 0,
         "logic": true
     },
     {
         "name": "Easy",
         "cells": 16,
-        "level": 1,
         "logic": true
     },
     {
         "name": "Novice",
         "cells": 24,
-        "level": 2,
         "logic": true
     },
     {
         "name": "Medium",
         "cells": 32,
-        "level": 3,
         "logic": true
     },
     {
         "name": "Intermediate",
         "cells": 40,
-        "level": 4,
         "logic": true
     },
     {
         "name": "Hard",
         "cells": 48,
-        "level": 5,
         "logic": true
     },
     {
         "name": "Difficult",
         "cells": 56,
-        "level": 6,
         "logic": false
     },
     {
         "name": "Expert",
         "cells": 64,
-        "level": 7,
         "logic": true
     },
     {
         "name": "☠️",
         "cells": 64,
-        "level": 8,
         "logic": false
     }
 ]

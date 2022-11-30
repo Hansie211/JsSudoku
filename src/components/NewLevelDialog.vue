@@ -7,7 +7,7 @@
             </q-card-section>
             <q-card-section class="text-h6"> Niveau </q-card-section>
             <q-card-section class="q-gutter-y-md">
-                <q-btn v-for="difficulty in Difficulty" :key="difficulty.level" color="primary" outline size="sm" align="left" class="full-width" @click="() => onOKClick(difficulty)">
+                <q-btn v-for="difficulty in Difficulties" :key="difficulty.level" color="primary" outline size="sm" align="left" class="full-width" @click="() => onOKClick(difficulty)">
                     <div style="display: flex; flex-direction: row; flex-wrap: nowrap; align-items: center; width: 100%; height: 40px; font-size: 1.4em">
                         <span>{{ difficulty.name }}</span>
                         <q-space />
@@ -24,7 +24,7 @@
 
 <script>
 import { ref } from "vue";
-import Difficulty from "src/data/difficulty.json";
+import Difficulties from "src/lib/difficulties";
 import DifficultyRating from "./DifficultyRating.vue";
 
 /**
@@ -44,7 +44,7 @@ export default {
     emits: ["ok", "hide"],
     setup() {
         return {
-            Difficulty,
+            Difficulties,
             levelNumber: ref(Math.floor(Math.random() * 4294967296)),
         };
     },

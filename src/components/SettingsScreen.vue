@@ -19,7 +19,7 @@
             </q-card-section>
             <q-separator />
             <q-card-section class="q-pb-none q-gutter-y-sm">
-                <q-btn label="Clear app data" outline color="secondary" size="md" class="full-width" @click="clearCache" />
+                <q-btn label="Wipe app data" outline color="secondary" size="md" class="full-width" @click="clearCache" />
                 <q-btn label="Finished games" outline color="secondary" size="md" class="full-width" @click="showHistory" />
                 <q-btn label="Clear level" push color="negative" size="lg" class="full-width" @click="onResetGame" />
                 <q-btn label="New level" push color="primary" size="lg" class="full-width" @click="onNewGame" />
