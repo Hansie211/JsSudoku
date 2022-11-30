@@ -142,10 +142,9 @@ export default class GameStateManager {
             cell.value = 0;
         } else {
             cell.value = value;
+            if (isHint) this.hintCount++;
             if (this.__updateVictoryState()) return;
         }
-
-        if (isHint) this.hintCount++;
 
         this.saveManager.save();
     }
