@@ -1,47 +1,49 @@
-[
-    {
-        "name": "Easier Than Easy",
-        "cells": 9,
-        "logic": true
-    },
-    {
-        "name": "Easy",
-        "cells": 16,
-        "logic": true
-    },
-    {
-        "name": "Novice",
-        "cells": 24,
-        "logic": true
-    },
-    {
-        "name": "Medium",
-        "cells": 32,
-        "logic": true
-    },
-    {
-        "name": "Intermediate",
-        "cells": 40,
-        "logic": true
-    },
-    {
-        "name": "Hard",
-        "cells": 48,
-        "logic": true
-    },
-    {
-        "name": "Difficult",
-        "cells": 56,
-        "logic": false
-    },
-    {
-        "name": "Expert",
-        "cells": 64,
-        "logic": true
-    },
-    {
-        "name": "☠️",
-        "cells": 64,
-        "logic": false
-    }
-]
+{
+    "levels": [
+        {
+            "name": "Easier Than Easy",
+            "cells": 9,
+            "logic": true
+        },
+        {
+            "name": "Easy",
+            "cells": 16,
+            "logic": true
+        },
+        {
+            "name": "Novice",
+            "cells": 24,
+            "logic": true
+        },
+        {
+            "name": "Medium",
+            "cells": 32,
+            "logic": true
+        },
+        {
+            "name": "Intermediate",
+            "cells": 40,
+            "logic": true
+        },
+        {
+            "name": "Hard",
+            "cells": 48,
+            "logic": true
+        },
+        {
+            "name": "Difficult",
+            "cells": 56,
+            "logic": false
+        },
+        {
+            "name": "Expert",
+            "cells": 64,
+            "logic": true
+        },
+        {
+            "name": "☠️",
+            "cells": 64,
+            "logic": false
+        }
+    ]
+}

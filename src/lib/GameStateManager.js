@@ -3,7 +3,7 @@ import Memory from "./Memory";
 import PuzzleBoard, { Cell } from "./reactiveSoduku";
 import SaveManager, { Savestate } from "./SaveManager";
 import Timer from "./Timer";
-import Difficulties from "src/lib/difficulties";
+import DifficultyLevels from "src/lib/difficulties";
 import { getPuzzle } from "./sudoku/sudoku";
 import DefaultPuzzle from "src/data/default-puzzle.json";
 import { StructureDefinitions } from "./sudoku/board";
@@ -272,7 +272,7 @@ export default class GameStateManager {
      * @returns {Promise<void>}
      */
     async newLevel(difficultyLevel, seed) {
-        const difficulty = Difficulties[difficultyLevel] ?? Difficulties[0];
+        const difficulty = DifficultyLevels[difficultyLevel] ?? DifficultyLevels[0];
 
         const [solution, board, _seed] = await getPuzzle(difficulty.cells, seed, difficulty.logic);
         PuzzleBoard.fromBoard(this.puzzle, board, solution, _seed);

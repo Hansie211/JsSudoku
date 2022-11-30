@@ -37,7 +37,7 @@ import NumberBar from "src/components/NumberBar";
 import VictoryScreen from "src/components/VictoryScreen";
 import GameStateManager from "src/lib/GameStateManager";
 import DifficultyRating from "src/components/DifficultyRating.vue";
-import Difficulties from "src/lib/difficulties";
+import DifficultieLevels from "src/lib/difficulties";
 
 export default defineComponent({
     components: { SudokuBoard, NumberBar, DifficultyRating },
@@ -221,7 +221,7 @@ export default defineComponent({
             return this.numCount.map((v, idx) => (v >= StructureDefinitions.SIZE ? idx + 1 : null)).filter((v) => v !== null);
         },
         gameDifficulty() {
-            return Difficulties[this.gameState.puzzle?.difficultyLevel ?? 0] ?? Difficulties[0];
+            return DifficultieLevels[this.gameState.puzzle?.difficultyLevel ?? 0] ?? DifficultieLevels[0];
         },
         selectCellMode() {
             return !this.settings.placeNumbersOnSelect;

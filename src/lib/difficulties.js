@@ -1,8 +1,8 @@
 import Difficulty from "src/data/difficulty.json";
 
-const Difficulties = Difficulty.map((x, idx) => {
+const DifficultyLevels = Difficulty.levels.map((x, idx) => {
     x.level = idx;
     return x;
 });
 
-export default Difficulties;
+export default DifficultyLevels;
