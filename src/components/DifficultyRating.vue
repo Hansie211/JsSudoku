@@ -1,7 +1,8 @@
 <template>
-    <div style="display: flex; flex-direction: row; align-items: center"><q-icon v-for="index in starCount" :key="index" :size="size" name="star" color="yellow" /></div>
+    <div style="display: flex; flex-direction: row; align-items: center"><q-icon v-for="index in starCount" :key="index" :size="size" name="star" :color="starColor" /></div>
 </template>
 <script>
+import { getStarColor, getStarCount } from "src/lib/difficulties";
 import { defineComponent } from "vue";
 
 export default defineComponent({
@@ -18,7 +19,10 @@ export default defineComponent({
     },
     computed: {
         starCount() {
-            return this.level + 1;
+            return getStarCount(this.level);
+        },
+        starColor() {
+            return getStarColor(this.level);
         },
     },
 });

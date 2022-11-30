@@ -45,5 +45,12 @@
             "cells": 64,
             "logic": false
         }
+    ],
+    "starColors": [
+        "yellow",
+        "red",
+        "blue",
+        "purple",
+        "black"
     ]
 }
