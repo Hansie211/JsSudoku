@@ -31,7 +31,7 @@ import SudokuBoard from "src/components/SudokuBoard.vue";
 import SettingsScreen from "src/components/SettingsScreen";
 import { StructureDefinitions } from "src/lib/sudoku/board";
 import { defineComponent, reactive, ref } from "vue";
-import { Cell } from "src/lib/reactiveSoduku";
+import PuzzleBoard, { Cell } from "src/lib/reactiveSoduku";
 import { useSettingsStore } from "src/stores/settings-store";
 import NumberBar from "src/components/NumberBar";
 import VictoryScreen from "src/components/VictoryScreen";
@@ -208,20 +208,7 @@ export default defineComponent({
                     .fill(null)
                     .map((_, idx) => idx + 1);
 
-            const getVal = (x, y) => this.gameState.puzzle.getCell({ x, y }).value;
-
-            const strucs = [this.selectedCell.row, this.selectedCell.column, this.selectedCell.square];
-            const values = strucs
-                .map((struct) =>
-                    Array(this.boardSize)
-                        .fill(null)
-                        .map((_, idx) => getVal(...struct.get(idx)))
-                        .filter((v) => v > 0)
-                )
-                .reduce((arr, curr) => arr.concat(curr), [])
-                .filter((item, index, arr) => arr.indexOf(item) === index);
-
-            return values;
+            return PuzzleBoard.getSurroundingValues(this.gameState.puzzle, this.selectedCell);
         },
         puzzleTime() {
             const time = this.gameState.timer.time;

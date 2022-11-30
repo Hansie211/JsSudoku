@@ -245,6 +245,26 @@ export default class PuzzleBoard {
     }
 
     /**
+     * @param {PuzzleBoard} puzzle
+     * @param {Cell} cell
+     * @returns {Array<Number>}
+     */
+    static getSurroundingValues(puzzle, cell) {
+        const getCellValue = (x, y) => puzzle.getCell({ x, y }).value;
+
+        const structs = [cell.row, cell.column, cell.square];
+        return structs
+            .map((struct) =>
+                Array(StructureDefinitions.SIZE)
+                    .fill(null)
+                    .map((_, idx) => getCellValue(...struct.get(idx)))
+                    .filter((v) => v > 0)
+            )
+            .reduce((arr, curr) => arr.concat(curr), [])
+            .filter((item, index, arr) => arr.indexOf(item) === index);
+    }
+
+    /**
      * @param {Position} position
      * @param {Array<Number} xy
      * @param {Number} x
