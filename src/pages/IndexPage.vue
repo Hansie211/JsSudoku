@@ -30,9 +30,10 @@
 import SudokuBoard from "src/components/SudokuBoard.vue";
 import SettingsScreen from "src/components/SettingsScreen";
 import { StructureDefinitions } from "src/lib/sudoku/board";
-import { defineComponent, reactive, ref } from "vue";
+import { defineComponent } from "vue";
 import PuzzleBoard, { Cell } from "src/lib/reactiveSoduku";
 import { useSettingsStore } from "src/stores/settings-store";
+import { getGameState } from "src/stores/game-store";
 import NumberBar from "src/components/NumberBar";
 import VictoryScreen from "src/components/VictoryScreen";
 import GameStateManager from "src/lib/GameStateManager";
@@ -44,27 +45,21 @@ export default defineComponent({
     name: "IndexPage",
     setup() {
         const settings = useSettingsStore();
-        const gameState = reactive(new GameStateManager(settings));
 
         return {
             settings,
             /** @type {GameStateManager} */
-            gameState,
+            gameState: getGameState(),
         };
     },
     created() {
-        this.gameState.eventBus.on("victory", (event) => {
+        this.gameState.eventBus.on("victory", (_) => {
             this.showVictory();
         });
 
         this.gameState.eventBus.on("error", (event) => {
             this.showError(event.message);
         });
-
-        this.gameState.saveManager.load();
-        this.gameState.eventBus.dispatch("start-level");
-
-        this.gameState.timer.start();
     },
     data() {
         return {
@@ -169,7 +164,7 @@ export default defineComponent({
                 }
             }
         },
-        cellUpdated(id, nval, oval) {
+        cellUpdated(_id, nval, oval) {
             if (nval) this.numCount[nval - 1]++;
             if (oval) this.numCount[oval - 1]--;
         },
