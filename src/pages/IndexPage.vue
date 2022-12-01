@@ -37,15 +37,18 @@ import VictoryScreen from "src/components/VictoryScreen";
 import GameStateManager from "src/lib/GameStateManager";
 import DifficultyRating from "src/components/DifficultyRating.vue";
 import DifficultieLevels from "src/lib/difficulties";
+import { useVictoryStore, Victory } from "src/stores/victory-store";
 
 export default defineComponent({
     components: { SudokuBoard, NumberBar, DifficultyRating },
     name: "IndexPage",
     setup() {
         const settings = useSettingsStore();
+        const victoryStore = useVictoryStore();
 
         return {
             settings,
+            victoryStore,
             /** @type {GameStateManager} */
             gameState: getGameState(),
         };
@@ -80,28 +83,25 @@ export default defineComponent({
         showVictory() {
             const time = this.gameState.timer.time;
 
-            const victories = this.$q.localStorage.getItem("victories")?.data ?? [];
-            victories.push({
+            const victory = new Victory({
                 level: this.gameState.puzzle.seed,
                 time: time,
                 hintCount: this.gameState.hintCount,
                 difficultyLevel: this.gameState.puzzle.difficultyLevel,
             });
-            this.$q.localStorage.set("victories", { data: victories });
 
             this.$q
                 .dialog({
                     component: VictoryScreen,
                     componentProps: {
-                        puzzle: this.gameState.puzzle,
-                        time: time,
-                        hintCount: this.gameState.hintCount,
+                        victory,
                     },
                 })
                 .onOk(async (info) => {
                     const seed = info.seed;
                     const difficultyLevel = info.difficultyLevel;
 
+                    this.victoryStore.addVictory(victory);
                     await this.gameState.newLevel(difficultyLevel, seed);
                 });
         },

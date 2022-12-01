@@ -144,9 +144,6 @@ export default defineComponent({
                     leftDrawerOpen.value = false;
                     $q.dialog({
                         component: VictoryHistoryScreen,
-                        componentProps: {
-                            victories: ($q.localStorage.getItem("victories")?.data ?? []).reverse(),
-                        },
                     });
                 },
             },

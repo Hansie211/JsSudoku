@@ -25,17 +25,18 @@
 </template>
 
 <script>
+import { useVictoryStore } from "src/stores/victory-store";
 import DifficultyRating from "./DifficultyRating.vue";
 export default {
     components: { DifficultyRating },
     name: "VictoryHistoryScreen",
-    props: {
-        victories: {
-            type: Array,
-            required: true,
-        },
-    },
     emits: ["ok", "hide"],
+    setup() {
+        const victoryStore = useVictoryStore();
+        return {
+            victories: victoryStore.victories,
+        };
+    },
     methods: {
         show() {
             this.$refs.dialog.show();
