@@ -1,6 +1,6 @@
 <template>
     <q-page id="page" v-if="gameState.puzzle">
-        <div>
+        <div class="q-pt-lg">
             <sudoku-board ref="sudoku" :puzzle="gameState.puzzle" :selectedValue="selectedValue" size="4.7vw" @click="cellClick" @cellUpdated="cellUpdated" />
         </div>
         <div id="bottom-bar" class="flex column full-width">
@@ -12,7 +12,6 @@
             </div>
             <div id="action-bar" class="full-width">
                 <div id="mode-bar" class="row q-pa-sm">
-                    <q-btn icon="settings" round flat size="md" @click="showSettings" />
                     <q-space />
                     <q-btn icon="undo" flat round size="md" @click="undo" />
                     <q-btn icon="tips_and_updates" flat round size="md" @click="hint" v-show="settings.showHints" />
@@ -28,7 +27,6 @@
 
 <script>
 import SudokuBoard from "src/components/SudokuBoard.vue";
-import SettingsScreen from "src/components/SettingsScreen";
 import { StructureDefinitions } from "src/lib/sudoku/board";
 import { defineComponent } from "vue";
 import PuzzleBoard, { Cell } from "src/lib/reactiveSoduku";
@@ -102,37 +100,6 @@ export default defineComponent({
                 })
                 .onOk(async (info) => {
                     await this.generateLevel(info.difficultyLevel, info.seed);
-                });
-        },
-        async generateLevel(difficultyLevel, seed) {
-            this.$q.loading.show({ message: "Generating level...", delay: 1 });
-
-            await this.gameState.newLevel(difficultyLevel, seed);
-
-            this.$q.loading.hide();
-        },
-        showSettings() {
-            this.gameState.timer.paused = true;
-            this.$q
-                .dialog({
-                    component: SettingsScreen,
-                    componentProps: {
-                        currentLevel: this.gameState.puzzle.seed,
-                        difficulty: this.gameDifficulty,
-                    },
-                })
-                .onOk(async (action) => {
-                    switch (action.name) {
-                        case "new-level":
-                            await this.generateLevel(action.data.difficultyLevel, action.data.seed);
-                            break;
-                        case "reset-level":
-                            this.gameState.resetLevel();
-                            break;
-                    }
-                })
-                .onDismiss(() => {
-                    this.gameState.timer.paused = false;
                 });
         },
 
