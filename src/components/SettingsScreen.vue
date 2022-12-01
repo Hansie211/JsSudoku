@@ -84,7 +84,7 @@ export default defineComponent({
                 }),
             },
             {
-                name: "Mark illegal moves",
+                name: "Washout invalid moves",
                 prop: computed({
                     get: () => settings.markImpossibleNumbers,
                     set: (v) => (settings.markImpossibleNumbers = v),
