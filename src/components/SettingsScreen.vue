@@ -35,8 +35,6 @@ import DifficultyLevels from "src/lib/difficulties";
 import { useSettingsStore } from "src/stores/settings-store";
 import { computed, defineComponent } from "vue";
 import DifficultyRating from "./DifficultyRating.vue";
-import NewLevelDialog from "./NewLevelDialog";
-import VictoryHistoryScreen from "./VictoryHistoryScreen.vue";
 
 export default defineComponent({
     components: { DifficultyRating },
