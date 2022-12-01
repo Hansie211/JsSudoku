@@ -18,11 +18,8 @@
                 <div class="text-subtitle2 full-width flex row">Difficulty: {{ difficulty.name }}&nbsp;(<difficulty-rating :level="difficulty.level" />)</div>
             </q-card-section>
             <q-separator />
-            <q-card-section class="q-pb-none q-gutter-y-sm">
-                <q-btn label="Wipe app data" outline color="secondary" size="md" class="full-width" @click="clearCache" />
-                <q-btn label="Finished games" outline color="secondary" size="md" class="full-width" @click="showHistory" />
-                <q-btn label="Clear level" push color="negative" size="lg" class="full-width" @click="onResetGame" />
-                <q-btn label="New level" push color="primary" size="lg" class="full-width" @click="onNewGame" />
+            <q-card-section class="q-pb-none">
+                <q-btn label="Wipe app data" outline color="negative" size="md" class="full-width q-my-md" @click="clearCache" />
             </q-card-section>
 
             <q-separator />
@@ -34,6 +31,7 @@
     </q-dialog>
 </template>
 <script>
+import DifficultyLevels from "src/lib/difficulties";
 import { useSettingsStore } from "src/stores/settings-store";
 import { computed, defineComponent } from "vue";
 import DifficultyRating from "./DifficultyRating.vue";
@@ -48,12 +46,12 @@ export default defineComponent({
             type: Number,
             required: true,
         },
-        difficulty: {
-            type: Object,
+        difficultyLevel: {
+            type: Number,
             required: true,
         },
     },
-    setup() {
+    setup(props) {
         const settings = useSettingsStore();
 
         const settingsToggles = [
@@ -104,6 +102,7 @@ export default defineComponent({
         return {
             settings,
             settingsToggles,
+            difficulty: DifficultyLevels[props.difficultyLevel],
         };
     },
     emits: ["ok", "hide"],
@@ -144,38 +143,12 @@ export default defineComponent({
             });
         },
 
-        async onResetGame() {
-            const confirm = await this.confirm("Are you sure? You cannot reverse this action.");
-            if (!confirm) return;
-
-            this.onDialogOK({ name: "reset-level", data: {} });
-        },
-
         async clearCache() {
             const confirm = await this.confirm("Are you sure? This will remove your current save game and the victory history. You cannot reverse this action.");
             if (!confirm) return;
 
             this.$q.localStorage.clear();
             location.reload();
-        },
-        onNewGame() {
-            this.$q.dialog({ component: NewLevelDialog }).onOk((levelInfo) => {
-                this.onDialogOK({
-                    name: "new-level",
-                    data: {
-                        seed: levelInfo.seed,
-                        difficultyLevel: levelInfo.difficultyLevel,
-                    },
-                });
-            });
-        },
-        showHistory() {
-            this.$q.dialog({
-                component: VictoryHistoryScreen,
-                componentProps: {
-                    victories: (this.$q.localStorage.getItem("victories")?.data ?? []).reverse(),
-                },
-            });
         },
     },
 });
