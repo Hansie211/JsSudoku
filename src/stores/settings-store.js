@@ -13,7 +13,7 @@ export const useSettingsStore = defineStore("settings", () => {
         autoRemoveNotes: ref(true),
     };
 
-    const saveManager = new SaveManager();
+    const saveManager = new SaveManager("settings");
     Object.keys(settings).forEach((key) => {
         saveManager.states.push(
             new Savestate(
