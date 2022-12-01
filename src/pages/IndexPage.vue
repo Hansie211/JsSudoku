@@ -44,7 +44,7 @@ export default defineComponent({
     name: "IndexPage",
     setup() {
         const settings = useSettingsStore();
-        const gameState = reactive(new GameStateManager());
+        const gameState = reactive(new GameStateManager(settings));
 
         return {
             settings,

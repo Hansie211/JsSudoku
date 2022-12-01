@@ -282,7 +282,9 @@ export default class GameStateManager {
         this.saveManager.save();
     }
 
-    constructor() {
+    constructor(settings) {
+        this.settings = settings;
+
         this.eventBus = new EventBus();
         this.memory = new Memory();
         this.timer = new Timer();
