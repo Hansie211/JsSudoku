@@ -1,7 +1,7 @@
 <template>
     <q-page id="page" v-if="gameState.puzzle">
         <div class="q-pt-lg">
-            <sudoku-board ref="sudoku" :puzzle="gameState.puzzle" :selectedValue="selectedValue" size="4.7vw" @click="cellClick" @cellUpdated="cellUpdated" />
+            <sudoku-board ref="sudoku" :puzzle="gameState.puzzle" :selectedValue="encircledValue" size="4.7vw" @click="cellClick" @cellUpdated="cellUpdated" />
         </div>
         <div id="bottom-bar" class="flex column full-width">
             <div id="info-bar" class="flex row full-width q-px-sm">
@@ -190,6 +190,11 @@ export default defineComponent({
         },
         selectNumberMode() {
             return !this.selectCellMode;
+        },
+        encircledValue() {
+            if (this.selectCellMode) return this.selectedValue;
+            if (this.selectedValue) return this.selectedValue;
+            return this.selectedCell?.value ?? 0;
         },
     },
     watch: {
