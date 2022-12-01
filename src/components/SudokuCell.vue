@@ -1,5 +1,6 @@
 <template>
-    <div class="cell" :class="classObject" @click="onClick">
+    <div class="cell" :class="classObject">
+        <div id="tap-selector" @click="() => $emit('click')"></div>
         <template v-if="cell.hasValue()">
             <div id="circle"></div>
             <template v-if="cell.isStatic">
@@ -68,11 +69,6 @@ export default defineComponent({
             settings,
         };
     },
-    methods: {
-        onClick() {
-            this.$emit("click");
-        },
-    },
     computed: {
         classObject() {
             return {
@@ -136,9 +132,6 @@ export default defineComponent({
     align-items: center;
     background-color: white;
 
-    cursor: pointer;
-    border: 0.1em solid transparent;
-
     -webkit-touch-callout: none;
     -webkit-user-select: none;
     -khtml-user-select: none;
@@ -201,5 +194,17 @@ export default defineComponent({
 .square-selected.row-selected,
 .square-selected.column-selected {
     background-color: var(--overlap-selected);
+}
+
+#tap-selector {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+
+    margin: 5%;
+    cursor: pointer;
 }
 </style>
