@@ -54,7 +54,9 @@ export default class SaveManager {
                 const savedState = JSON.parse(save[key]);
                 state.setState(savedState);
             } catch (error) {
-                state.setDefault();
+                if (state.setDefault !== undefined) {
+                    state.setDefault();
+                }
             }
         });
     }
