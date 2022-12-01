@@ -10,6 +10,7 @@ export const useSettingsStore = defineStore("settings", () => {
         showHints: ref(true),
         markImpossibleNumbers: ref(true),
         placeNumbersOnSelect: ref(false),
+        autoRemoveNotes: ref(true),
     };
 
     const saveManager = new SaveManager();

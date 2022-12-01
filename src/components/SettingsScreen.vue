@@ -79,6 +79,13 @@ export default defineComponent({
                 }),
             },
             {
+                name: "Auto remove notes",
+                prop: computed({
+                    get: () => settings.autoRemoveNotes,
+                    set: (v) => (settings.autoRemoveNotes = v),
+                }),
+            },
+            {
                 name: "Mark illegal moves",
                 prop: computed({
                     get: () => settings.markImpossibleNumbers,

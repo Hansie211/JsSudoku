@@ -140,14 +140,21 @@ export default class GameStateManager {
             this.__saveMemoryState(cellId, cell.value, { isNote: false, isHint });
             cell.value = 0;
         } else {
-            const cellsWithNote = PuzzleBoard.getSurroundingCells(this.puzzle, cell).filter((cell) => !cell.hasValue() && cell.notes.hasValue(value));
-            const noteStates = cellsWithNote.map((cell) => this.__createMemoryState(cell.id, cell.notes.values, { isNote: true, isHint: false }));
             const cellState = this.__createMemoryState(cellId, cell.value, { isNote: false, isHint });
-
-            this.__saveMemoryStates(noteStates.concat([cellState]));
+            var saveStates = [cellState];
 
             cell.value = value;
-            cellsWithNote.forEach((cell) => cell.notes.removeValue(value));
+
+            if (this.settings.autoRemoveNotes) {
+                const cellsWithNote = PuzzleBoard.getSurroundingCells(this.puzzle, cell).filter((cell) => !cell.hasValue() && cell.notes.hasValue(value));
+                const noteStates = cellsWithNote.map((cell) => this.__createMemoryState(cell.id, [...cell.notes.values], { isNote: true, isHint: false }));
+
+                saveStates = saveStates.concat(noteStates);
+
+                cellsWithNote.forEach((cell) => cell.notes.removeValue(value));
+            }
+
+            this.__saveMemoryStates(saveStates);
 
             if (isHint) this.hintCount++;
 
