@@ -1,6 +1,5 @@
 <template>
     <div>
-        <div class="text-h6">Sudoku #{{ puzzle.seed }}</div>
         <div id="board">
             <div v-for="(_, squareIndex) in boardSize" :key="squareIndex" class="square">
                 <sudoku-cell
