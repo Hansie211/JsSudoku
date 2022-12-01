@@ -7,6 +7,7 @@ import DifficultyLevels from "src/lib/difficulties";
 import { getPuzzle } from "./sudoku/sudoku";
 import DefaultPuzzle from "src/data/default-puzzle.json";
 import { StructureDefinitions } from "./sudoku/board";
+import { Loading } from "quasar";
 
 export default class GameStateManager {
     /** @type {PuzzleBoard} */
@@ -279,6 +280,8 @@ export default class GameStateManager {
      * @returns {Promise<void>}
      */
     async newLevel(difficultyLevel, seed) {
+        Loading.show({ message: "Generating level..." });
+
         const difficulty = DifficultyLevels[difficultyLevel] ?? DifficultyLevels[0];
 
         const [solution, board, _seed] = await getPuzzle(difficulty.cells, seed, difficulty.logic);
@@ -287,6 +290,8 @@ export default class GameStateManager {
 
         this.resetGameState();
         this.saveManager.save();
+
+        Loading.hide();
     }
 
     constructor(settings) {

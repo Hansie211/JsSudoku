@@ -99,7 +99,10 @@ export default defineComponent({
                     },
                 })
                 .onOk(async (info) => {
-                    await this.generateLevel(info.difficultyLevel, info.seed);
+                    const seed = info.seed;
+                    const difficultyLevel = info.difficultyLevel;
+
+                    await this.gameState.newLevel(difficultyLevel, seed);
                 });
         },
 

@@ -122,13 +122,7 @@ export default defineComponent({
                         const seed = levelInfo.seed;
                         const difficultyLevel = levelInfo.difficultyLevel;
 
-                        $q.loading.show({ message: "Generating level...", delay: 1 });
-
                         await gameState.newLevel(difficultyLevel, seed);
-
-                        $q.loading.hide();
-
-                        // await this.generateLevel(action.data.difficultyLevel, action.data.seed);
                     });
                 },
             },
