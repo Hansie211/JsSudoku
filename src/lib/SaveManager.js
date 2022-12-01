@@ -67,5 +67,8 @@ export default class SaveManager {
     constructor(storageKey) {
         this.storageKey = storageKey;
         this.states = [];
+
+        this.save = this.save.bind(this);
+        this.load = this.load.bind(this);
     }
 }
