@@ -138,7 +138,7 @@ export default defineComponent({
                 },
             },
             {
-                label: "Victories",
+                label: "Completed games",
                 icon: "o_local_activity",
                 action: () => {
                     leftDrawerOpen.value = false;

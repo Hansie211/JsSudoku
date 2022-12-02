@@ -1,18 +1,18 @@
 <template>
     <q-dialog ref="dialog" @hide="onDialogHide" persistent>
         <q-card class="q-dialog-plugin q-pa-sm">
-            <q-card-section class="text-h2"> You Won! </q-card-section>
-            <q-card-section class="q-gutter-y-md text-h6">
-                <div class="text-h6 row items-center">
+            <q-card-section class="text-h4"> Game completed! </q-card-section>
+            <q-card-section class="q-gutter-y-md text-body1 q-my-lg">
+                <div class="row items-center">
                     Difficulty: <span class="q-ml-sm"><difficulty-rating :level="victory.difficultyLevel" /></span>
                 </div>
-                <div class="text-h6 row items-center">
+                <div class="row items-center">
                     Hints: <span class="q-ml-sm">{{ victory.hintCount }}</span>
                 </div>
-                <div class="text-h6 row items-center">
-                    Time Taken: <span class="q-ml-sm">{{ displayTime }}</span>
+                <div class="row items-center">
+                    Time: <span class="q-ml-sm">{{ displayTime }}</span>
                 </div>
-                <div class="text-h6 row items-center">
+                <div class="row items-center">
                     Level: <span class="q-ml-sm">#{{ victory.level }}</span>
                 </div>
             </q-card-section>

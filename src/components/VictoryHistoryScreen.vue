@@ -1,7 +1,7 @@
 <template>
     <q-dialog ref="dialog" @hide="onDialogHide" persistent>
         <q-card class="q-dialog-plugin q-pa-sm">
-            <q-card-section class="text-h4"> Victories </q-card-section>
+            <q-card-section class="text-h4"> Completed games </q-card-section>
             <q-card-section class="q-my-md text-h6">
                 <template v-if="victories.length">
                     <q-markup-table style="max-height: 60vh" separator="horizontal" flat bordered class="text-subtitle2">
