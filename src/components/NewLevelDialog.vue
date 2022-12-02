@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import { ref } from "vue";
+import { defineComponent, ref } from "vue";
 import DifficultieLevels from "src/lib/difficulties";
 import DifficultyRating from "./DifficultyRating.vue";
 
@@ -37,7 +37,7 @@ function parseDef(value, def) {
     return isNaN(result) ? def : result;
 }
 
-export default {
+export default defineComponent({
     components: { DifficultyRating },
     name: "NewLevelDialog",
     props: {},
@@ -69,5 +69,5 @@ export default {
             this.hide();
         },
     },
-};
+});
 </script>

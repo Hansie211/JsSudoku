@@ -27,8 +27,9 @@
 import NewLevelDialog from "./NewLevelDialog.vue";
 import DifficultyRating from "./DifficultyRating.vue";
 import { Victory } from "src/stores/victory-store";
+import { defineComponent } from "vue";
 
-export default {
+export default defineComponent({
     name: "VictoryScreen",
     components: { DifficultyRating },
     props: {
@@ -68,5 +69,5 @@ export default {
             return m.toString().padStart(2, "0") + ":" + s.toString().padStart(2, "0");
         },
     },
-};
+});
 </script>

@@ -27,7 +27,9 @@
 <script>
 import { useVictoryStore } from "src/stores/victory-store";
 import DifficultyRating from "./DifficultyRating.vue";
-export default {
+import { defineComponent } from "vue";
+
+export default defineComponent({
     components: { DifficultyRating },
     name: "VictoryHistoryScreen",
     emits: ["ok", "hide"],
@@ -55,5 +57,5 @@ export default {
             return m.toString().padStart(2, "0") + ":" + s.toString().padStart(2, "0");
         },
     },
-};
+});
 </script>
