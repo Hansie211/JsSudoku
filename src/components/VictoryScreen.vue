@@ -4,25 +4,25 @@
             <q-card-section class="text-h4"> Game completed! </q-card-section>
             <q-card-section id="scoreboard" class="text-body1 q-my-lg">
                 <div class="score-item">
-                    <div class="caption text-subtitle2">Difficulty <q-icon class="icon" name="o_psychology" /></div>
+                    <div class="caption text-subtitle2 flex row items-center">Difficulty <q-icon class="icon" name="o_psychology" /></div>
                     <div class="value">
                         <difficulty-rating :level="victory.difficultyLevel" />
                     </div>
                 </div>
                 <div class="score-item">
-                    <div class="caption text-subtitle2">Hints <q-icon class="icon" name="o_tips_and_updates" /></div>
+                    <div class="caption text-subtitle2 flex row items-center">Hints <q-icon class="icon" name="o_tips_and_updates" /></div>
                     <div class="value text-body1">
                         {{ victory.hintCount }}
                     </div>
                 </div>
                 <div class="score-item">
-                    <div class="caption text-subtitle2">Time <q-icon class="icon" name="o_timer" /></div>
+                    <div class="caption text-subtitle2 flex row items-center">Time <q-icon class="icon" name="o_timer" /></div>
                     <div class="value text-body1">
                         {{ displayTime }}
                     </div>
                 </div>
                 <div class="score-item">
-                    <div class="caption text-subtitle2">Level <q-icon class="icon" name="o_tour" /></div>
+                    <div class="caption text-subtitle2 flex row items-center">Level <q-icon class="icon" name="o_tour" /></div>
                     <div class="value text-body1">#{{ victory.level }}</div>
                 </div>
             </q-card-section>
@@ -86,5 +86,9 @@ export default defineComponent({
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     grid-row-gap: 20px;
+}
+
+.caption {
+    gap: 5px;
 }
 </style>
